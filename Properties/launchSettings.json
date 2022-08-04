@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "EnvControlPanel (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "EnvControlPanel (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}
