@@ -10,6 +10,8 @@ namespace EnvControlPanel.Model
     {
         private string _deviceSerialName;
         private int _deviceId;
+        private float _temperature;
+        private float _pressure;
         private static int _idCount = 0;
         
 
@@ -40,7 +42,23 @@ namespace EnvControlPanel.Model
         }
 
 
+        public float Temperature
+        {
+            get => _temperature;
+            set
+            {
+                _temperature = value;
+            }
+        }
 
+        public float Pressure
+        {
+            get => _pressure;
+            set
+            {
+                _pressure = value;
+            }
+        }
 
     }
 }

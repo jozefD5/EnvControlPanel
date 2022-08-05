@@ -10,5 +10,77 @@
 
     <Grid>
 
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+
+        <TextBlock Text="Data"
+                   Style="{StaticResource TitleLargeTextBlockStyle}"
+                   Margin="10"/>
+
+        
+        
+        
+        
+
+        <Grid Grid.Row="1"
+              Margin="4,20,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+
+            <StackPanel>
+                <TextBlock Text="Temperature"
+                           Style="{StaticResource SubtitleTextBlockStyle}"
+                           HorizontalAlignment="Center"
+                           Margin="0,0,0,4"/>
+
+                <Grid>
+                    <TextBlock Text="70 °C"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Center"/>
+                    <ProgressRing Width="250" Height="250" Maximum="120" Minimum="0" Value="70" IsIndeterminate="False"/>
+                </Grid>
+            </StackPanel>
+
+
+            <StackPanel Grid.Column="2">
+                <TextBlock Text="Pressure"
+                           Style="{StaticResource SubtitleTextBlockStyle}"
+                           HorizontalAlignment="Center"
+                           Margin="0,0,0,4"/>
+
+                <Grid>
+                    <TextBlock Text="50 psi"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Center"/>
+                    <ProgressRing Width="250" Height="250" Maximum="120" Minimum="0" Value="50" IsIndeterminate="False"/>
+                </Grid>
+            </StackPanel>
+
+
+
+
+
+
+
+
+
+
+
+        </Grid>
+        
+        
+        
+        
+
+
+
+
     </Grid>
 </Page>
