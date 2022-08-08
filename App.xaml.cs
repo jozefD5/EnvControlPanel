@@ -16,6 +16,7 @@ using Windows.ApplicationModel.Activation;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 
+using EnvControlPanel.ViewModels;
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
@@ -30,6 +31,12 @@ namespace EnvControlPanel
         /// Initializes the singleton application object.  This is the first line of authored code
         /// executed, and as such is the logical equivalent of main() or WinMain().
         /// </summary>
+   
+
+        public static MainViewModel ViewMode { get; } = new MainViewModel();
+
+
+
         public App()
         {
             this.InitializeComponent();
