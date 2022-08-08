@@ -1,0 +1,144 @@
+﻿<Page
+    x:Class="EnvControlPanel.Views.HomeView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:EnvControlPanel.Views"
+    xmlns:model="using:EnvControlPanel.Model"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+
+    
+    
+    
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="100"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+
+
+
+        <TextBlock Text="Home"
+                   Style="{StaticResource TitleLargeTextBlockStyle}"
+                   Margin="10"/>
+
+
+        <StackPanel Grid.Row="1"
+                    Orientation="Horizontal"
+                    Margin="4,0,0,4">
+            
+            <Button Content="Refresh List"
+                    FontWeight="Bold"
+                    Margin="0,0,8,0"/>
+
+            <Button Content="Connect"
+                    FontWeight="Bold"/>
+
+        </StackPanel>
+
+
+        <ListView Grid.Row="2"
+                  ItemsSource="{x:Bind _devices}">
+
+            <ListView.HeaderTemplate>
+                <DataTemplate>
+
+                    <Grid Margin="4,0,4,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="130"/>
+                            <ColumnDefinition Width="130"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Border BorderBrush="{ThemeResource SystemAccentColor}"
+                                BorderThickness="0,0,0,1">
+                            <TextBlock Text="Serial Name"
+                                       Margin="4,0,0,0"
+                                       Style="{StaticResource SubtitleTextBlockStyle}"/>
+                        </Border>
+
+                        <Border Grid.Column="1"
+                                BorderBrush="{ThemeResource SystemAccentColor}"
+                                BorderThickness="0,0,0,1">
+                            <TextBlock Text="Device ID"
+                                       Margin="4,0,0,4"
+                                       Style="{StaticResource SubtitleTextBlockStyle}"/>
+                        </Border>
+
+                        <Border Grid.Column="2"
+                                BorderBrush="{ThemeResource SystemAccentColor}"
+                                BorderThickness="0,0,0,1">
+                            <TextBlock Text="Status"
+                                       Margin="4,0,0,4"
+                                       Style="{StaticResource SubtitleTextBlockStyle}"/>
+                        </Border>
+                    </Grid>
+                </DataTemplate>
+            </ListView.HeaderTemplate>
+
+            <ListView.ItemTemplate>
+                <DataTemplate x:DataType="model:EnvDevice">
+
+                    <Grid IsHitTestVisible="False">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="130"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Text="{x:Bind Path=DeviceSerialName}"/>
+                        <TextBlock Grid.Column="1" Text="{x:Bind Path=DeviceId}"/>
+                    </Grid>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+
+
+        <StackPanel Grid.Row="3"
+                    Margin="4,50,0,4">
+
+            <TextBlock Text="Device Info"
+                       Style="{StaticResource SubtitleTextBlockStyle}"
+                       Margin="0,0,0,4"/>
+
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <StackPanel>
+                    <TextBlock Text="Firmware Version"
+                               Style="{StaticResource CaptionTextBlockStyle}"/>
+                    <TextBlock Text="Manufacturer"
+                               Style="{StaticResource CaptionTextBlockStyle}"/>
+                    <TextBlock Text="Device  Status"
+                               Style="{StaticResource CaptionTextBlockStyle}"/>
+                </StackPanel>
+
+                <StackPanel Grid.Column="1"
+                            Margin="8,0,0,0">
+                    <TextBlock Text="0"
+                               Style="{StaticResource CaptionTextBlockStyle}"/>
+                    <TextBlock Text="0"
+                               Style="{StaticResource CaptionTextBlockStyle}"/>
+                    <TextBlock Text="0"
+                               Style="{StaticResource CaptionTextBlockStyle}"/>
+                </StackPanel>
+
+
+            </Grid>
+        </StackPanel>
+        
+        
+
+
+
+    </Grid>
+    
+</Page>
