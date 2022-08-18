@@ -13,6 +13,13 @@ namespace EnvControlPanel.Models
         public string SerialName { get; set; }
         public ComStatus ConnectStatus { get; set; }
 
+        /*
+        public SerialComDevice(string name)
+        {
+            this.SerialName = name;
+            this.ConnectStatus = ComStatus.disconnect;
+        }
+        */
 
     }
 }

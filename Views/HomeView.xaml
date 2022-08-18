@@ -35,16 +35,22 @@
             
             <Button Content="Refresh List"
                     FontWeight="Bold"
+                    Command="{x:Bind ViewModel.RefreshCommand}"
                     Margin="0,0,8,0"/>
 
             <Button Content="Connect"
-                    FontWeight="Bold"/>
+                    FontWeight="Bold"
+                    Command="{x:Bind ViewModel.ConnectCommand}"/>
+
+            <TextBlock Text="SS: "/>
+            <TextBlock Text="{x:Bind ViewModel.SelectIndex, Mode=OneWay}"/>
 
         </StackPanel>
 
 
         <ListView Grid.Row="2"
-                  ItemsSource="{x:Bind ViewModel.SerialItems}">
+                  ItemsSource="{x:Bind ViewModel.SerialItems}"
+                  SelectedIndex="{x:Bind ViewModel.SelectIndex, Mode=TwoWay}">
 
             <ListView.HeaderTemplate>
                 <DataTemplate>
