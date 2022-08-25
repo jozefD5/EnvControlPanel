@@ -40,10 +40,7 @@
 
             <Button Content="Connect"
                     FontWeight="Bold"
-                    Command="{x:Bind ViewModel.ConnectCommand}"/>
-
-            <TextBlock Text="SS: "/>
-            <TextBlock Text="{x:Bind ViewModel.SelectIndex, Mode=OneWay}"/>
+                    IsEnabled="{x:Bind ViewModel.EnableConnect, Mode=OneWay}"/>
 
         </StackPanel>
 

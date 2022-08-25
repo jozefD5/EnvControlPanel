@@ -23,6 +23,8 @@ namespace EnvControlPanel.ViewModels
         public ICommand RefreshCommand { get; set;}
         public ICommand ConnectCommand { get; set;}
 
+        public bool CanConect;
+
         private int selectIndex;    
 
 
@@ -31,8 +33,8 @@ namespace EnvControlPanel.ViewModels
         {
             PopulateData();
 
-            RefreshCommand = new RelayCommand(RefreshDeviceList);
-            ConnectCommand = new RelayCommand(ConnectToDevice, CanConnect);
+            //RefreshCommand = new RelayCommand(RefreshDeviceList);
+            //ConnectCommand = new RelayCommand(ConnectToDevice, CanConnect);
         }
 
 
@@ -86,19 +88,27 @@ namespace EnvControlPanel.ViewModels
 
         public int SelectIndex
         {
-            get
-            {
-                return selectIndex;
-            }
+            get => selectIndex;
 
             set
             {
-                Debug.WriteLine($"Set Index:{selectIndex}");
 
-                int newIndex = (int)value;
                 SetProperty(ref selectIndex, value);
-                ((RelayCommand)ConnectCommand).RaiseCanExecuteChanged();
+                
+                EnableConnect = (selectIndex > 0);  
+            }
+        }
 
+
+
+        public bool EnableConnect
+        {
+            get => CanConect;
+
+            set
+            {
+                SetProperty(ref CanConect, value);
+                Debug.WriteLine($"CanConnect: {CanConect}");
             }
         }
 
@@ -115,21 +125,8 @@ namespace EnvControlPanel.ViewModels
 
         public void ConnectToDevice()
         {
- 
+            Debug.WriteLine($"Set Index:{selectIndex}");
         }
-
-
-        private bool CanConnect()
-        {
-            Debug.WriteLine($"Set CanConnect:{selectIndex}");
-            if (selectIndex > 0)
-            {
-                return true;
-            }
-
-            return false;
-        }
-
 
 
     }

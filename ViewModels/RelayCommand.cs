@@ -21,7 +21,9 @@ namespace EnvControlPanel.ViewModels
         public RelayCommand(Action action, Func<bool> canExecute)
         {
             if (action == null)
+            {
                 throw new ArgumentNullException(nameof(action));
+            }
 
             this.action = action;
             this.canExecute = canExecute;
