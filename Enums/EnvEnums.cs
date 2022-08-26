@@ -12,4 +12,12 @@ namespace EnvControlPanel.Enums
         DataDisplayView,
         SettingsView
     }
+
+
+    public enum ComStatus
+    {
+        connect, 
+        disconnect,
+        error
+    }
 }

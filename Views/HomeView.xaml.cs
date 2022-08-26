@@ -13,7 +13,7 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 
-using EnvControlPanel.Model;
+using EnvControlPanel.ViewModels;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -25,34 +25,14 @@ namespace EnvControlPanel.Views
     /// </summary>
     public sealed partial class HomeView : Page
     {
-        private IList<EnvDevice> _devices;
-        private bool _initialized;
-
 
         public HomeView()
         {
             this.InitializeComponent();
-            PopulateData();
         }
 
-        
-        private void PopulateData()
-        {
-            if (!_initialized)
-            {
-                _initialized = true;
+        public MainViewModel ViewModel => App.ViewMode;
 
-                EnvDevice d0 = new("COM0");
-                EnvDevice d1 = new("COM1");
-                EnvDevice d2 = new("COM2");
-
-                _devices = new List<EnvDevice>
-                {
-                    d0, d1, d2
-                };
-
-                _initialized = true;
-            }
-        }
+      
     }
 }
