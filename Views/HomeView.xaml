@@ -40,7 +40,8 @@
 
             <Button Content="Connect"
                     FontWeight="Bold"
-                    IsEnabled="{x:Bind ViewModel.EnableConnect, Mode=OneWay}"/>
+                    IsEnabled="{x:Bind ViewModel.EnableConnect, Mode=OneWay}"
+                    Command="{x:Bind ViewModel.ConnectCommand, Mode=OneWay}"/>
 
         </StackPanel>
 

@@ -20,12 +20,16 @@ namespace EnvControlPanel.ViewModels
 
         private SerialComDevice selectedComsPort;
 
-        public ICommand RefreshCommand { get; set;}
-        public ICommand ConnectCommand { get; set;}
+        private int selectIndex;
 
         public bool CanConect;
 
-        private int selectIndex;    
+        public ICommand RefreshCommand { get; set;}
+        public ICommand ConnectCommand { get; set;}
+
+        
+
+           
 
 
 
@@ -33,8 +37,8 @@ namespace EnvControlPanel.ViewModels
         {
             PopulateData();
 
-            //RefreshCommand = new RelayCommand(RefreshDeviceList);
-            //ConnectCommand = new RelayCommand(ConnectToDevice, CanConnect);
+            RefreshCommand = new RelayCommand(RefreshDeviceList);
+            ConnectCommand = new RelayCommand(ConnectToDevice);
         }
 
 
@@ -70,37 +74,20 @@ namespace EnvControlPanel.ViewModels
         }
 
 
-        //Select item
-        /*
-        public SerialComDevice SelectedComsPort
-        {
-            get => selectedComsPort;
-
-            set
-            {
-                SerialComDevice item = value as SerialComDevice;
-                SetProperty(ref selectedComsPort, item);
-                ((RelayCommand)ConnectCommand).RaiseCanExecuteChanged();
-            }
-        }
-        */
-
-
         public int SelectIndex
         {
             get => selectIndex;
 
             set
             {
-
                 SetProperty(ref selectIndex, value);
-                
+                SetProperty(ref selectedComsPort, serialItems[selectIndex]);
+
                 EnableConnect = (selectIndex > 0);  
             }
         }
 
-
-
+      
         public bool EnableConnect
         {
             get => CanConect;
@@ -108,11 +95,8 @@ namespace EnvControlPanel.ViewModels
             set
             {
                 SetProperty(ref CanConect, value);
-                Debug.WriteLine($"CanConnect: {CanConect}");
             }
         }
-
-
 
 
         public void RefreshDeviceList()
@@ -126,8 +110,11 @@ namespace EnvControlPanel.ViewModels
         public void ConnectToDevice()
         {
             Debug.WriteLine($"Set Index:{selectIndex}");
+            Debug.WriteLine($"ComPort: {selectedComsPort.SerialName}");
         }
 
 
+
+   
     }
 }
