@@ -47,13 +47,13 @@ namespace EnvControlPanel.ViewModels
 
         public void PopulateData()
         {
-            var comEmpty = new SerialComDevice {SerialName = "Empty Port", ConnectStatus = ComStatus.disconnect };
+            var comEmpty = new SerialComDevice("Empty Port");
 
-            var com0 = new SerialComDevice { SerialName = "COM 0", ConnectStatus = ComStatus.disconnect};
+            var com0 = new SerialComDevice("COM 0");
 
-            var com1 = new SerialComDevice { SerialName = "COM 1", ConnectStatus = ComStatus.disconnect };
+            var com1 = new SerialComDevice("COM 1"); ;
 
-            var com2 = new SerialComDevice { SerialName = "COM 2", ConnectStatus = ComStatus.disconnect };
+            var com2 = new SerialComDevice("COM 2");
 
             serialItems = new ObservableCollection<SerialComDevice>
             {
@@ -101,7 +101,7 @@ namespace EnvControlPanel.ViewModels
 
         public void RefreshDeviceList()
         {
-            var newDevice = new SerialComDevice { SerialName = "COM-N", ConnectStatus = ComStatus.disconnect };
+            var newDevice = new SerialComDevice("COM-N"); ;
 
             SerialItems.Add(newDevice);
         }
