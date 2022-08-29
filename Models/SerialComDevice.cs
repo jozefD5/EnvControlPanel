@@ -4,46 +4,114 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using EnvControlPanel.Enums;
+using EnvControlPanel.ViewModels;
 using System.IO.Ports;
+
 
 namespace EnvControlPanel.Models
 {
-    public class SerialComDevice
+    public class SerialComDevice : BindableBase
     {
-        public string serialPortName { get; set; }
-        public ComStatus ConnectStatus { get; set; }
+        public ComStatus connectStatus;
 
         private SerialPort serialPort;
 
-        private SerialConfig SerialConf;
 
 
 
         public SerialComDevice(string name)
         {
-            this.serialPortName = name;
-            this.ConnectStatus = ComStatus.disconnect;
+            ConnectStatus = ComStatus.disconnect;
 
-            serialPort = new SerialPort();
+            serialPort = new SerialPort
+            {
+                PortName = name
+            };
 
             SetSerialConf();
         }
 
 
-        public string SerialPortName
+
+        public string PortName
         {
-            get => serialPortName;
+            get => serialPort.PortName;
+            set => serialPort.PortName = value;
+        }
+
+        public int BaudRate
+        {
+            get => serialPort.BaudRate;
+            set => serialPort.BaudRate = value;
+        }
+
+        public int DataBits
+        {
+            get => serialPort.DataBits; 
+            set => serialPort.DataBits = value;
+        }
+
+        public Parity ParityBits
+        {
+            get => serialPort.Parity;
+            set => serialPort.Parity = value;
+        }
+
+        public StopBits StopBit
+        {
+            get => serialPort.StopBits; 
+            set => serialPort.StopBits = value;
+        }
+
+        public ComStatus ConnectStatus
+        {
+            get => connectStatus;
 
             set
             {
-                serialPortName = value;
+                SetProperty(ref connectStatus, value);
             }
+        }
+
+        public bool IsOpen
+        {
+            get => serialPort.IsOpen;
         }
 
 
 
+        public void Close()
+        {
+            if (IsOpen)
+            {
+                serialPort.Close();
+            }
+            CheckConnect();
+        }
+
+        public void Open()
+        {
+            if (!IsOpen)
+            {
+                serialPort.Open();
+            }
+            CheckConnect();
+        }
+
+        
 
 
+        private void CheckConnect()
+        {
+            if (IsOpen)
+            {
+                ConnectStatus = ComStatus.connect;
+            }
+            else
+            {
+                ConnectStatus = ComStatus.disconnect;
+            }
+        }
 
 
 
@@ -51,11 +119,10 @@ namespace EnvControlPanel.Models
         //Set default serial config parameters
         private void SetSerialConf()
         {
-            SerialConf.Port = this.SerialPortName;
-            SerialConf.BaudRate = 115200;
-            SerialConf.DataBits = 8;
-            SerialConf.ParityBits = Parity.None;
-            SerialConf.StopBits = StopBits.One;
+            BaudRate = 115200;
+            DataBits = 8;
+            ParityBits = Parity.None;
+            StopBit = StopBits.One;
         }
 
     }

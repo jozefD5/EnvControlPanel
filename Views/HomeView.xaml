@@ -87,8 +87,8 @@
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
 
-                        <TextBlock Text="{x:Bind Path=SerialPortName}"/>
-                        <TextBlock Grid.Column="1" Text="{x:Bind Path=ConnectStatus}"/>
+                        <TextBlock Text="{x:Bind Path=PortName}"/>
+                        <TextBlock Grid.Column="1" Text="{x:Bind Path=ConnectStatus,Mode=OneWay}"/>
                     </Grid>
                 </DataTemplate>
             </ListView.ItemTemplate>
