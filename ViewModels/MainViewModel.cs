@@ -28,11 +28,13 @@ namespace EnvControlPanel.ViewModels
 
         private int oldIndex;
 
-        public bool CanConect;
+        private bool enableConnect;
+        private bool enableDisconnect;
 
 
         public ICommand RefreshCommand { get; set;}
         public ICommand ConnectCommand { get; set;}
+        public ICommand DisconnectCommand { get; set;}
 
         
 
@@ -51,6 +53,7 @@ namespace EnvControlPanel.ViewModels
             //Commands
             RefreshCommand = new RelayCommand(RefreshDeviceList);
             ConnectCommand = new RelayCommand(ConnectToDevice);
+            DisconnectCommand = new RelayCommand(DisconnectDevice);
 
             //Get list of all connected devices
             RefreshDeviceList();
@@ -77,17 +80,30 @@ namespace EnvControlPanel.ViewModels
             {
                 //only enable connect if selected device is not empty com port
                 SetProperty(ref selectIndex, value);
-                EnableConnect = (selectIndex > 0);  
+                SetProperty(ref selectedComsPort, serialItems[selectIndex]);
+
+                EnableConnect = (selectIndex > 0);
+                EnableDisconnect = selectedComsPort.IsOpen;
             }
         }
 
         public bool EnableConnect
         {
-            get => CanConect;
+            get => enableConnect;
 
             set
             {
-                SetProperty(ref CanConect, value);
+                SetProperty(ref enableConnect, value);
+            }
+        }
+
+        public bool EnableDisconnect
+        {
+            get => enableDisconnect;
+
+            set
+            {
+                SetProperty(ref enableDisconnect, value);
             }
         }
 
@@ -98,6 +114,8 @@ namespace EnvControlPanel.ViewModels
         public void RefreshDeviceList()
         {
             ClearSerialItems();
+
+            EnableDisconnect = false;
 
             foreach (string str in SerialPort.GetPortNames())
             {
@@ -122,12 +140,9 @@ namespace EnvControlPanel.ViewModels
         }
          
 
-        //Connecte to seected device
+        //Connecte to selected device
         public void ConnectToDevice()
         {
-            //Get most recent selected device
-            SetProperty(ref selectedComsPort, serialItems[selectIndex]);
-
             //Close old selected-port/device before opening new selected port
             if((oldIndex != selectIndex) && (oldIndex > 0))
             {
@@ -135,14 +150,25 @@ namespace EnvControlPanel.ViewModels
             }
 
             selectedComsPort.Open();
-            
+            EnableDisconnect = selectedComsPort.IsOpen;
+
             //set old index to current selected device
             oldIndex = selectIndex;
         }
 
 
-        
+        //Disconnect from selected device
+        public void DisconnectDevice()
+        {
+            if (selectedComsPort.IsOpen)
+            {
+                selectedComsPort.Close();
+            }
+            EnableDisconnect = selectedComsPort.IsOpen;
+        }
 
-   
+
+
+
     }
 }
