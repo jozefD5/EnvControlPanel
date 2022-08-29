@@ -9,6 +9,8 @@ using System.Windows.Input;
 using EnvControlPanel.Models;
 using EnvControlPanel.Enums;
 using System.Diagnostics;
+using System.IO.Ports;
+
 
 
 namespace EnvControlPanel.ViewModels
@@ -20,6 +22,10 @@ namespace EnvControlPanel.ViewModels
 
         private SerialComDevice selectedComsPort;
 
+
+        private SerialComDevice EmptyComPort;
+
+
         private int selectIndex;
 
         public bool CanConect;
@@ -29,16 +35,19 @@ namespace EnvControlPanel.ViewModels
 
         
 
-           
-
 
 
         public MainViewModel()
         {
+            
+            EmptyComPort = new SerialComDevice("Empty COM Port");
+
             PopulateData();
 
             RefreshCommand = new RelayCommand(RefreshDeviceList);
             ConnectCommand = new RelayCommand(ConnectToDevice);
+
+            RefreshDeviceList();
         }
 
 
@@ -47,17 +56,10 @@ namespace EnvControlPanel.ViewModels
 
         public void PopulateData()
         {
-            var comEmpty = new SerialComDevice("Empty Port");
-
-            var com0 = new SerialComDevice("COM 0");
-
-            var com1 = new SerialComDevice("COM 1"); ;
-
-            var com2 = new SerialComDevice("COM 2");
 
             serialItems = new ObservableCollection<SerialComDevice>
             {
-                comEmpty, com0, com1, com2
+                EmptyComPort
             };
 
         }
@@ -81,8 +83,6 @@ namespace EnvControlPanel.ViewModels
             set
             {
                 SetProperty(ref selectIndex, value);
-                SetProperty(ref selectedComsPort, serialItems[selectIndex]);
-
                 EnableConnect = (selectIndex > 0);  
             }
         }
@@ -101,19 +101,45 @@ namespace EnvControlPanel.ViewModels
 
         public void RefreshDeviceList()
         {
-            var newDevice = new SerialComDevice("COM-N"); ;
+            int portsNumber = SerialPort.GetPortNames().Length;
 
-            SerialItems.Add(newDevice);
+            Debug.WriteLine($"Serial Ports: {portsNumber}");
+
+
+            ClearSerialItems();
+
+
+
+            foreach (string str in SerialPort.GetPortNames())
+            {
+                Debug.WriteLine($"SerialCom: {str}");
+
+                SerialItems.Add(new SerialComDevice(str));
+            }
         }
 
 
         public void ConnectToDevice()
         {
+            SetProperty(ref selectedComsPort, serialItems[selectIndex]);
+
             Debug.WriteLine($"Set Index:{selectIndex}");
-            Debug.WriteLine($"ComPort: {selectedComsPort.SerialName}");
+            Debug.WriteLine($"ComPort: {selectedComsPort.SerialPortName}");
         }
 
 
+        public void ClearSerialItems()
+        {
+
+            int length = SerialItems.Count;
+
+            SelectIndex = 0;
+            selectIndex = 0;
+
+            serialItems.Clear();
+
+            serialItems.Add(EmptyComPort);
+        }
 
    
     }

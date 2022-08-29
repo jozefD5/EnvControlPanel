@@ -47,7 +47,7 @@
 
 
         <ListView Grid.Row="2"
-                  ItemsSource="{x:Bind ViewModel.SerialItems}"
+                  ItemsSource="{x:Bind ViewModel.SerialItems, Mode=OneTime}"
                   SelectedIndex="{x:Bind ViewModel.SelectIndex, Mode=TwoWay}">
 
             <ListView.HeaderTemplate>
@@ -87,7 +87,7 @@
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
 
-                        <TextBlock Text="{x:Bind Path=SerialName}"/>
+                        <TextBlock Text="{x:Bind Path=SerialPortName}"/>
                         <TextBlock Grid.Column="1" Text="{x:Bind Path=ConnectStatus}"/>
                     </Grid>
                 </DataTemplate>
