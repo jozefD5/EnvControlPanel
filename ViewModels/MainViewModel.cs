@@ -9,7 +9,8 @@ using System.Windows.Input;
 using EnvControlPanel.Models;
 using EnvControlPanel.Enums;
 using System.Diagnostics;
-
+using System.IO.Ports;
+using Windows.ApplicationModel.Appointments.AppointmentsProvider;
 
 namespace EnvControlPanel.ViewModels
 {
@@ -20,47 +21,45 @@ namespace EnvControlPanel.ViewModels
 
         private SerialComDevice selectedComsPort;
 
+        private SerialComDevice EmptyComPort;
+
+
         private int selectIndex;
 
-        public bool CanConect;
+        private int oldIndex;
+
+        private bool enableConnect;
+        private bool enableDisconnect;
+
 
         public ICommand RefreshCommand { get; set;}
         public ICommand ConnectCommand { get; set;}
+        public ICommand DisconnectCommand { get; set;}
 
         
-
-           
 
 
 
         public MainViewModel()
         {
-            PopulateData();
-
-            RefreshCommand = new RelayCommand(RefreshDeviceList);
-            ConnectCommand = new RelayCommand(ConnectToDevice);
-        }
-
-
-
-
-
-        public void PopulateData()
-        {
-            var comEmpty = new SerialComDevice {SerialName = "Empty Port", ConnectStatus = ComStatus.disconnect };
-
-            var com0 = new SerialComDevice { SerialName = "COM 0", ConnectStatus = ComStatus.disconnect};
-
-            var com1 = new SerialComDevice { SerialName = "COM 1", ConnectStatus = ComStatus.disconnect };
-
-            var com2 = new SerialComDevice { SerialName = "COM 2", ConnectStatus = ComStatus.disconnect };
+            //Add empty com port to device list
+            EmptyComPort = new SerialComDevice("Empty COM Port");
 
             serialItems = new ObservableCollection<SerialComDevice>
             {
-                comEmpty, com0, com1, com2
+                EmptyComPort
             };
 
+            //Commands
+            RefreshCommand = new RelayCommand(RefreshDeviceList);
+            ConnectCommand = new RelayCommand(ConnectToDevice);
+            DisconnectCommand = new RelayCommand(DisconnectDevice);
+
+            //Get list of all connected devices
+            RefreshDeviceList();
         }
+
+
 
 
         public ObservableCollection<SerialComDevice> SerialItems
@@ -73,48 +72,103 @@ namespace EnvControlPanel.ViewModels
             }
         }
 
-
         public int SelectIndex
         {
             get => selectIndex;
 
             set
             {
+                //only enable connect if selected device is not empty com port
                 SetProperty(ref selectIndex, value);
                 SetProperty(ref selectedComsPort, serialItems[selectIndex]);
 
-                EnableConnect = (selectIndex > 0);  
+                EnableConnect = (selectIndex > 0);
+                EnableDisconnect = selectedComsPort.IsOpen;
             }
         }
 
-      
         public bool EnableConnect
         {
-            get => CanConect;
+            get => enableConnect;
 
             set
             {
-                SetProperty(ref CanConect, value);
+                SetProperty(ref enableConnect, value);
+            }
+        }
+
+        public bool EnableDisconnect
+        {
+            get => enableDisconnect;
+
+            set
+            {
+                SetProperty(ref enableDisconnect, value);
             }
         }
 
 
+
+
+        //Close all connections and then refresh device list
         public void RefreshDeviceList()
         {
-            var newDevice = new SerialComDevice { SerialName = "COM-N", ConnectStatus = ComStatus.disconnect };
+            ClearSerialItems();
 
-            SerialItems.Add(newDevice);
+            EnableDisconnect = false;
+
+            foreach (string str in SerialPort.GetPortNames())
+            {
+                Debug.WriteLine($"SerialCom: {str}");
+
+                SerialItems.Add(new SerialComDevice(str));
+            }
         }
 
+        public void ClearSerialItems()
+        {
 
+            //Close all ports
+            foreach (SerialComDevice device in serialItems)
+            {
+                device.Close();
+            }
+
+            //Clear all items and then add empty com port
+            serialItems.Clear();
+            serialItems.Add(EmptyComPort);
+        }
+         
+
+        //Connecte to selected device
         public void ConnectToDevice()
         {
-            Debug.WriteLine($"Set Index:{selectIndex}");
-            Debug.WriteLine($"ComPort: {selectedComsPort.SerialName}");
+            //Close old selected-port/device before opening new selected port
+            if((oldIndex != selectIndex) && (oldIndex > 0))
+            {
+                serialItems[oldIndex].Close();
+            }
+
+            selectedComsPort.Open();
+            EnableDisconnect = selectedComsPort.IsOpen;
+
+            //set old index to current selected device
+            oldIndex = selectIndex;
+        }
+
+
+        //Disconnect from selected device
+        public void DisconnectDevice()
+        {
+            if (selectedComsPort.IsOpen)
+            {
+                selectedComsPort.Close();
+            }
+            EnableDisconnect = selectedComsPort.IsOpen;
         }
 
 
 
-   
+
     }
 }

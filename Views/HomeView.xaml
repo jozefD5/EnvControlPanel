@@ -41,13 +41,19 @@
             <Button Content="Connect"
                     FontWeight="Bold"
                     IsEnabled="{x:Bind ViewModel.EnableConnect, Mode=OneWay}"
-                    Command="{x:Bind ViewModel.ConnectCommand, Mode=OneWay}"/>
+                    Command="{x:Bind ViewModel.ConnectCommand, Mode=OneWay}"
+                    Margin="0,0,8,0"/>
+
+            <Button Content="Disconnect"
+                    FontWeight="Bold"
+                    IsEnabled="{x:Bind ViewModel.EnableDisconnect, Mode=OneWay}"
+                    Command="{x:Bind ViewModel.DisconnectCommand, Mode=OneWay}"/>
 
         </StackPanel>
 
 
         <ListView Grid.Row="2"
-                  ItemsSource="{x:Bind ViewModel.SerialItems}"
+                  ItemsSource="{x:Bind ViewModel.SerialItems, Mode=OneTime}"
                   SelectedIndex="{x:Bind ViewModel.SelectIndex, Mode=TwoWay}">
 
             <ListView.HeaderTemplate>
@@ -87,8 +93,8 @@
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
 
-                        <TextBlock Text="{x:Bind Path=SerialName}"/>
-                        <TextBlock Grid.Column="1" Text="{x:Bind Path=ConnectStatus}"/>
+                        <TextBlock Text="{x:Bind Path=PortName}"/>
+                        <TextBlock Grid.Column="1" Text="{x:Bind Path=ConnectStatus,Mode=OneWay}"/>
                     </Grid>
                 </DataTemplate>
             </ListView.ItemTemplate>
