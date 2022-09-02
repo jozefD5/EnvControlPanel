@@ -21,7 +21,7 @@ namespace EnvControlPanel.ViewModels
 
         private SerialComDevice selectedComsPort;
 
-        private SerialComDevice EmptyComPort;
+        private readonly SerialComDevice EmptyComPort;
 
 
         private int selectIndex;
