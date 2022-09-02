@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using EnvControlPanel.Enums;
 using EnvControlPanel.ViewModels;
 using System.IO.Ports;
-
+using System.Diagnostics;
 
 namespace EnvControlPanel.Models
 {
@@ -91,11 +91,22 @@ namespace EnvControlPanel.Models
 
         public void Open()
         {
-            if (!IsOpen)
+
+
+            try
             {
-                serialPort.Open();
+                if (!IsOpen)
+                {
+                    serialPort.Open();
+                }
+                CheckConnect();
+
             }
-            CheckConnect();
+            catch(System.IO.FileNotFoundException ex)
+            {
+                Debug.WriteLine("Exception: " + ex.ToString());
+                ConnectStatus = ComStatus.error;
+            }
         }
 
         

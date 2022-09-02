@@ -80,12 +80,26 @@ namespace EnvControlPanel.ViewModels
             {
                 //only enable connect if selected device is not empty com port
                 SetProperty(ref selectIndex, value);
-                SetProperty(ref selectedComsPort, serialItems[selectIndex]);
 
-                EnableConnect = (selectIndex > 0);
-                EnableDisconnect = selectedComsPort.IsOpen;
+                if(value > 0)
+                {
+                    SetProperty(ref selectedComsPort, serialItems[value]);
+
+                    EnableConnect = true;
+                    EnableDisconnect = selectedComsPort.IsOpen;
+                }
+                else
+                {
+                    EnableConnect = false;
+                    EnableDisconnect = false;
+                }
+                
             }
         }
+
+
+
+
 
         public bool EnableConnect
         {
@@ -116,6 +130,7 @@ namespace EnvControlPanel.ViewModels
             ClearSerialItems();
 
             EnableDisconnect = false;
+
 
             foreach (string str in SerialPort.GetPortNames())
             {
@@ -160,7 +175,7 @@ namespace EnvControlPanel.ViewModels
         //Disconnect from selected device
         public void DisconnectDevice()
         {
-            if (selectedComsPort.IsOpen)
+            if ((selectedComsPort.IsOpen) && (selectIndex > 0) )
             {
                 selectedComsPort.Close();
             }
