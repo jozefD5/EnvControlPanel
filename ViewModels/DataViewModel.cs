@@ -6,14 +6,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
-
+using ABI.Windows.UI;
 using EnvControlPanel.Models;
 using LiveChartsCore;
 using LiveChartsCore.Defaults;
 using LiveChartsCore.SkiaSharpView;
+using LiveChartsCore.SkiaSharpView.Painting;
 using LiveChartsCore.SkiaSharpView.WinUI;
-
-
+using Microsoft.UI.Xaml.Media;
+using SkiaSharp;
 
 namespace EnvControlPanel.ViewModels
 {
@@ -29,10 +30,6 @@ namespace EnvControlPanel.ViewModels
 
         private double lastPressure;
         private string lastPressureStr;
-
-
-        private double newTemp;
-        private double newPressure;
 
         public double MaxTemp { get; set; }
         public double MinTemp { get; set; }
@@ -50,7 +47,7 @@ namespace EnvControlPanel.ViewModels
 
 
 
-public DataViewModel()
+        public DataViewModel()
         {
             //Settings
             MaxTemp = 140;
@@ -60,13 +57,11 @@ public DataViewModel()
             MiniPressure = -20;
 
             //Setup
-            newTemp = MinTemp;
-            temperatureData = new ObservableCollection<double> { newTemp };
+            temperatureData = new ObservableCollection<double> {0.0};
             lastTemperature = temperatureData.LastOrDefault();
             lastTemperatureStr = lastTemperature.ToString() + " °C";
 
-            newPressure = MiniPressure;
-            pressureData = new ObservableCollection<double> { newPressure };
+            pressureData = new ObservableCollection<double> {0.0};
             lastPressure = pressureData.LastOrDefault();
             lastPressureStr = lastPressure.ToString() + " psi";
 
@@ -76,8 +71,21 @@ public DataViewModel()
                 new LineSeries<double>
                 {
                     Values = TemperatureData,
-                    Fill = null
+                    Fill = null,
+                    GeometrySize = 0,
+                    LineSmoothness = 1,
+                    Stroke = new SolidColorPaint(SKColors.MediumVioletRed)
+                },
+
+                new LineSeries<double>
+                {
+                    Values = PressureData,
+                    Fill= null,
+                    GeometrySize = 0,
+                    LineSmoothness = 1,
+                    Stroke = new SolidColorPaint(SKColors.DeepSkyBlue)
                 }
+
             };
 
             AddTempCommand = new RelayCommand(AddTemp);
@@ -165,14 +173,15 @@ public DataViewModel()
 
         public void AddTemp()
         {
-            newTemp ++;
-            newPressure++;
 
-            if (newTemp > MaxTemp) { newTemp = MinTemp; }
-            if(newPressure > MaxPressure) { newPressure = MiniPressure; }
+            Random tempVal = new Random();
 
-            TemperatureData.Add(newTemp);
-            PressureData.Add(newPressure);
+            double temp1 = tempVal.Next(-10, 120);
+            double temp2 = tempVal.Next(-5, 120);
+
+
+            TemperatureData.Add(temp1);
+            PressureData.Add(temp2);
 
             UpdateReadings();
         }
