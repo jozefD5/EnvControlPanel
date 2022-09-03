@@ -40,11 +40,18 @@
                            Margin="0,0,0,4"/>
 
                 <Grid>
-                    <TextBlock Text="70 °C"
+                    <TextBlock Text="{x:Bind ViewModelData.LastTempStr, Mode=OneWay}"
                        HorizontalAlignment="Center"
                        VerticalAlignment="Center"/>
-                    <ProgressRing Width="250" Height="250" Maximum="120" Minimum="0" IsIndeterminate="False" Value="40"/>
+                    <ProgressRing Width="250" Height="250" 
+                                  Maximum="{x:Bind ViewModelData.MaxTemp}"
+                                  Minimum="{x:Bind ViewModelData.MinTemp}" 
+                                  IsIndeterminate="False" 
+                                  Value="{x:Bind ViewModelData.LastTemp, Mode=OneWay}"/>
                 </Grid>
+
+                <Button Content="TempButton"
+                        Command="{x:Bind ViewModelData.AddTempCommand}"/>
             </StackPanel>
 
 
@@ -58,8 +65,10 @@
                     <TextBlock Text="50 psi"
                        HorizontalAlignment="Center"
                        VerticalAlignment="Center"/>
-                    <ProgressRing Width="250" Height="250" Maximum="120" Minimum="0" IsIndeterminate="False"
-                                  Value="{x:Bind ViewModelData.Temp}/>
+                    <ProgressRing Width="250" Height="250" 
+                                  Maximum="120" Minimum="0" 
+                                  IsIndeterminate="False"
+                                  Value="50"/>
                 </Grid>
             </StackPanel>
 
@@ -70,6 +79,8 @@
         <Grid Grid.Row="2">
 
             <TextBlock Text="TEST"/>
+            
+
 
 
         </Grid>
