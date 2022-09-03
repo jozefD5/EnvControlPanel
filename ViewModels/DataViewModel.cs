@@ -6,8 +6,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using EnvControlPanel.Models;
 
+using EnvControlPanel.Models;
+using LiveChartsCore;
+using LiveChartsCore.Defaults;
+using LiveChartsCore.SkiaSharpView;
+using LiveChartsCore.SkiaSharpView.WinUI;
 
 
 
@@ -28,11 +32,13 @@ namespace EnvControlPanel.ViewModels
 
 
 
+        public ObservableCollection<ISeries> Series { get; set; }
 
 
 
 
-        public DataViewModel()
+
+public DataViewModel()
         {
             //Settings
             MaxTemp = 140;
@@ -43,9 +49,19 @@ namespace EnvControlPanel.ViewModels
             tempData = new ObservableCollection<double> { newTemp };
             lastTemp = tempData.LastOrDefault();
             lastTempStr = lastTemp.ToString() + " °C";
-       
+
+            Series = new ObservableCollection<ISeries>
+            {
+                new LineSeries<double>
+                {
+                    Values = TempData,
+                    Fill = null
+                }
+            };
+
             AddTempCommand = new RelayCommand(AddTemp);
         }
+
 
 
 
@@ -101,6 +117,9 @@ namespace EnvControlPanel.ViewModels
         }
 
 
+
+
+        
 
 
 
