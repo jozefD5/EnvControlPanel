@@ -63,13 +63,14 @@
                            Margin="0,0,0,4"/>
 
                 <Grid>
-                    <TextBlock Text="50 psi"
+                    <TextBlock Text="{x:Bind ViewModelData.LastPressureStr, Mode=OneWay}"
                        HorizontalAlignment="Center"
                        VerticalAlignment="Center"/>
                     <ProgressRing Width="250" Height="250" 
-                                  Maximum="120" Minimum="0" 
+                                  Maximum="{x:Bind ViewModelData.MaxPressure}"
+                                  Minimum="{x:Bind ViewModelData.MiniPressure}" 
                                   IsIndeterminate="False"
-                                  Value="50"/>
+                                  Value="{x:Bind ViewModelData.LastPressure, Mode=OneWay}"/>
                 </Grid>
             </StackPanel>
 

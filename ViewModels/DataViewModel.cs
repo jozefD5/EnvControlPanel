@@ -20,17 +20,29 @@ namespace EnvControlPanel.ViewModels
     public class DataViewModel : BindableBase
     {
 
-        private ObservableCollection<double> tempData;
+        private ObservableCollection<double> temperatureData;
+        private ObservableCollection<double> pressureData;
+
+
+        private double lastTemperature;
+        private string lastTemperatureStr;
+
+        private double lastPressure;
+        private string lastPressureStr;
+
+
         private double newTemp;
-        private double lastTemp;
-        private string lastTempStr;
+        private double newPressure;
 
         public double MaxTemp { get; set; }
         public double MinTemp { get; set; }
 
+        public double MaxPressure { get; set; }
+        public double MiniPressure { get; set; }
+        
+
+
         public ICommand AddTempCommand { get; set; }
-
-
 
         public ObservableCollection<ISeries> Series { get; set; }
 
@@ -44,17 +56,26 @@ public DataViewModel()
             MaxTemp = 140;
             MinTemp = -50;
 
+            MaxPressure = 120;
+            MiniPressure = -20;
+
             //Setup
             newTemp = MinTemp;
-            tempData = new ObservableCollection<double> { newTemp };
-            lastTemp = tempData.LastOrDefault();
-            lastTempStr = lastTemp.ToString() + " °C";
+            temperatureData = new ObservableCollection<double> { newTemp };
+            lastTemperature = temperatureData.LastOrDefault();
+            lastTemperatureStr = lastTemperature.ToString() + " °C";
+
+            newPressure = MiniPressure;
+            pressureData = new ObservableCollection<double> { newPressure };
+            lastPressure = pressureData.LastOrDefault();
+            lastPressureStr = lastPressure.ToString() + " psi";
+
 
             Series = new ObservableCollection<ISeries>
             {
                 new LineSeries<double>
                 {
-                    Values = TempData,
+                    Values = TemperatureData,
                     Fill = null
                 }
             };
@@ -65,43 +86,79 @@ public DataViewModel()
 
 
 
-
-        public ObservableCollection<double> TempData
+        //Temperature 
+        public ObservableCollection<double> TemperatureData
         {
-            get => tempData;
+            get => temperatureData;
 
             set
             {
-                SetProperty(ref tempData, value);
+                SetProperty(ref temperatureData, value);
             }
         }
 
         public double LastTemp
         {
-            get => lastTemp;
+            get => lastTemperature;
 
             set
             {
-                SetProperty(ref lastTemp, value);
+                SetProperty(ref lastTemperature, value);
             }
         }
 
         public string LastTempStr
         {
-            get => lastTempStr;
+            get => lastTemperatureStr;
 
             set
             {
-                SetProperty(ref lastTempStr, value);
+                SetProperty(ref lastTemperatureStr, value);
+            }
+        }
+
+
+        //Pressure
+        public ObservableCollection<double> PressureData
+        {
+            get => pressureData;
+
+            set
+            {
+                SetProperty(ref pressureData, value);
+            }
+        }
+
+        public double LastPressure
+        {
+            get => lastPressure;
+
+            set
+            {
+                SetProperty(ref lastPressure, value);
+            }
+        }
+
+        public string LastPressureStr
+        {
+            get => lastPressureStr;
+
+            set
+            {
+                SetProperty(ref lastPressureStr, value);
             }
         }
 
 
 
-        private void UpdateTemperature()
+
+        private void UpdateReadings()
         {
-            LastTemp = tempData.LastOrDefault();
-            LastTempStr = lastTemp.ToString() + " °C";
+            LastTemp = temperatureData.LastOrDefault();
+            LastTempStr = lastTemperature.ToString() + " °C";
+
+            LastPressure = pressureData.LastOrDefault();
+            LastPressureStr = lastPressure.ToString() + " psi";
         }
 
      
@@ -109,11 +166,15 @@ public DataViewModel()
         public void AddTemp()
         {
             newTemp ++;
+            newPressure++;
 
             if (newTemp > MaxTemp) { newTemp = MinTemp; }
-            TempData.Add(newTemp);
+            if(newPressure > MaxPressure) { newPressure = MiniPressure; }
 
-            UpdateTemperature();
+            TemperatureData.Add(newTemp);
+            PressureData.Add(newPressure);
+
+            UpdateReadings();
         }
 
 
