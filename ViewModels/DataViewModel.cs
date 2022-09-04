@@ -10,6 +10,7 @@ using ABI.Windows.UI;
 using EnvControlPanel.Models;
 using LiveChartsCore;
 using LiveChartsCore.Defaults;
+using LiveChartsCore.Kernel;
 using LiveChartsCore.SkiaSharpView;
 using LiveChartsCore.SkiaSharpView.Painting;
 using LiveChartsCore.SkiaSharpView.WinUI;
@@ -47,6 +48,9 @@ namespace EnvControlPanel.ViewModels
 
 
 
+
+
+
         public DataViewModel()
         {
             //Settings
@@ -70,26 +74,33 @@ namespace EnvControlPanel.ViewModels
             {
                 new LineSeries<double>
                 {
-                    Values = TemperatureData,
+                    Name = "Pressure",
+                    Values = PressureData,
                     Fill = null,
+                    Stroke = new SolidColorPaint(SKColors.MidnightBlue),
                     GeometrySize = 0,
                     LineSmoothness = 1,
-                    Stroke = new SolidColorPaint(SKColors.MediumVioletRed)
+                    TooltipLabelFormatter = (charPoin) => $"{charPoin.Context.Series.Name}: {charPoin.PrimaryValue}"
                 },
 
                 new LineSeries<double>
                 {
-                    Values = PressureData,
-                    Fill= null,
+                    Name = "Temperature",
+                    Values = TemperatureData,
+                    Fill = null,
+                    Stroke = new SolidColorPaint(SKColors.PaleVioletRed),
                     GeometrySize = 0,
                     LineSmoothness = 1,
-                    Stroke = new SolidColorPaint(SKColors.DeepSkyBlue)
+                    TooltipLabelFormatter = (charPoin) => $"{charPoin.Context.Series.Name}: {charPoin.PrimaryValue}"
                 }
-
             };
 
             AddTempCommand = new RelayCommand(AddTemp);
         }
+
+
+    
+
 
 
 

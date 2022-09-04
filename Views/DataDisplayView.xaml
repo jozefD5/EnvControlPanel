@@ -81,10 +81,9 @@
         <Grid Grid.Row="2"
               Margin="4,0,0,0">
 
-            <lvc:CartesianChart Series="{x:Bind ViewModelData.Series}"
-                                Margin="0,0,0,20"/>
-
-
+                <lvc:CartesianChart Margin="0,0,0,20"
+                                TooltipPosition="Top"
+                                Series="{x:Bind ViewModelData.Series}"/>
 
 
         </Grid>
