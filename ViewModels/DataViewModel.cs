@@ -16,6 +16,7 @@ using LiveChartsCore.SkiaSharpView.Painting;
 using LiveChartsCore.SkiaSharpView.WinUI;
 using Microsoft.UI.Xaml.Media;
 using SkiaSharp;
+using Windows.Foundation.Collections;
 
 namespace EnvControlPanel.ViewModels
 {
@@ -42,11 +43,8 @@ namespace EnvControlPanel.ViewModels
 
         public ICommand AddTempCommand { get; set; }
 
-        public ObservableCollection<ISeries> Series { get; set; }
-
-
-
-
+        public ObservableCollection<ISeries> SeriesTemperature { get; set; }
+        public ObservableCollection<ISeries> SeriesPressure { get; set; }
 
 
 
@@ -70,7 +68,22 @@ namespace EnvControlPanel.ViewModels
             lastPressureStr = lastPressure.ToString() + " psi";
 
 
-            Series = new ObservableCollection<ISeries>
+
+            SeriesTemperature = new ObservableCollection<ISeries>
+            {
+                new LineSeries<double>
+                {
+                    Name = "Temperature",
+                    Values = TemperatureData,
+                    Fill = null,
+                    Stroke = new SolidColorPaint(SKColors.PaleVioletRed),
+                    GeometrySize = 0,
+                    LineSmoothness = 1,
+                    TooltipLabelFormatter = (charPoin) => $"{charPoin.Context.Series.Name}: {charPoin.PrimaryValue}"
+                }
+            };
+
+            SeriesPressure = new ObservableCollection<ISeries>
             {
                 new LineSeries<double>
                 {
@@ -78,17 +91,6 @@ namespace EnvControlPanel.ViewModels
                     Values = PressureData,
                     Fill = null,
                     Stroke = new SolidColorPaint(SKColors.MidnightBlue),
-                    GeometrySize = 0,
-                    LineSmoothness = 1,
-                    TooltipLabelFormatter = (charPoin) => $"{charPoin.Context.Series.Name}: {charPoin.PrimaryValue}"
-                },
-
-                new LineSeries<double>
-                {
-                    Name = "Temperature",
-                    Values = TemperatureData,
-                    Fill = null,
-                    Stroke = new SolidColorPaint(SKColors.PaleVioletRed),
                     GeometrySize = 0,
                     LineSmoothness = 1,
                     TooltipLabelFormatter = (charPoin) => $"{charPoin.Context.Series.Name}: {charPoin.PrimaryValue}"
@@ -185,7 +187,7 @@ namespace EnvControlPanel.ViewModels
         public void AddTemp()
         {
 
-            Random tempVal = new Random();
+            Random tempVal = new();
 
             double temp1 = tempVal.Next(-10, 120);
             double temp2 = tempVal.Next(-5, 120);

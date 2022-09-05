@@ -14,7 +14,10 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+
         </Grid.RowDefinitions>
 
 
@@ -77,17 +80,67 @@
         </Grid>
 
 
-        
+
         <Grid Grid.Row="2"
               Margin="4,0,0,0">
 
-                <lvc:CartesianChart Margin="0,0,0,20"
-                                TooltipPosition="Top"
-                                Series="{x:Bind ViewModelData.Series}"/>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+
+
+            <TextBlock Grid.Column="0" 
+                       VerticalAlignment="Center"
+                       HorizontalAlignment="Center"
+                       Text="Temperature °C"
+                       Style="{StaticResource NavigationViewItemHeaderTextStyle}">
+                <TextBlock.RenderTransform>
+                    <RotateTransform Angle="270"/>
+                </TextBlock.RenderTransform>
+            </TextBlock>
+
+
+            <StackPanel Grid.Column="1"
+                        VerticalAlignment="Top"
+                        HorizontalAlignment="Stretch">
+
+                <lvc:CartesianChart TooltipPosition="Top"
+                                    Series="{x:Bind ViewModelData.SeriesTemperature}"
+                                    ZoomMode="X"
+                                    MinHeight="200"/>
+
+                <TextBlock Text="Sample Number"
+                           Style="{StaticResource NavigationViewItemHeaderTextStyle}"
+                           HorizontalAlignment="Center"/>
+            </StackPanel>
 
 
         </Grid>
+
+
+
+
+
         
+
+        <!--<Border Grid.Row="3"
+                BorderThickness="1"
+                BorderBrush="DARKCYAN"
+                Margin="4,0,4,10">
+            
+            <lvc:CartesianChart TooltipPosition="Top"
+                                Series="{x:Bind ViewModelData.SeriesPressure}"
+                                ZoomMode="X"/>
+        </Border>-->
+        
+
+
+        
+
+        
+
 
 
 
