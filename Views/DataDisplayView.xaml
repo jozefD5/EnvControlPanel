@@ -14,10 +14,8 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="*"/>
-
+            <RowDefinition Height="*"/> 
         </Grid.RowDefinitions>
 
 
@@ -47,7 +45,7 @@
                     <TextBlock Text="{x:Bind ViewModelData.LastTempStr, Mode=OneWay}"
                        HorizontalAlignment="Center"
                        VerticalAlignment="Center"/>
-                    <ProgressRing Width="250" Height="250" 
+                    <ProgressRing Width="280" Height="280" 
                                   Maximum="{x:Bind ViewModelData.MaxTemp}"
                                   Minimum="{x:Bind ViewModelData.MinTemp}" 
                                   IsIndeterminate="False" 
@@ -69,7 +67,7 @@
                     <TextBlock Text="{x:Bind ViewModelData.LastPressureStr, Mode=OneWay}"
                        HorizontalAlignment="Center"
                        VerticalAlignment="Center"/>
-                    <ProgressRing Width="250" Height="250" 
+                    <ProgressRing Width="280" Height="280" 
                                   Maximum="{x:Bind ViewModelData.MaxPressure}"
                                   Minimum="{x:Bind ViewModelData.MiniPressure}" 
                                   IsIndeterminate="False"
@@ -79,71 +77,85 @@
 
         </Grid>
 
-
-
-        <Grid Grid.Row="2"
-              Margin="4,0,0,0">
-
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
-
-
-
-            <TextBlock Grid.Column="0" 
-                       VerticalAlignment="Center"
-                       HorizontalAlignment="Center"
-                       Text="Temperature °C"
-                       Style="{StaticResource NavigationViewItemHeaderTextStyle}">
-                <TextBlock.RenderTransform>
-                    <RotateTransform Angle="270"/>
-                </TextBlock.RenderTransform>
-            </TextBlock>
-
-
-            <StackPanel Grid.Column="1"
-                        VerticalAlignment="Top"
-                        HorizontalAlignment="Stretch">
-
-                <lvc:CartesianChart TooltipPosition="Top"
-                                    Series="{x:Bind ViewModelData.SeriesTemperature}"
-                                    ZoomMode="X"
-                                    MinHeight="200"/>
-
-                <TextBlock Text="Sample Number"
-                           Style="{StaticResource NavigationViewItemHeaderTextStyle}"
-                           HorizontalAlignment="Center"/>
-            </StackPanel>
-
-
-        </Grid>
-
-
-
-
-
         
-
-        <!--<Border Grid.Row="3"
+        
+        
+        
+        <Border Grid.Row="2"
+                BorderBrush="DarkCyan"
                 BorderThickness="1"
-                BorderBrush="DARKCYAN"
-                Margin="4,0,4,10">
-            
-            <lvc:CartesianChart TooltipPosition="Top"
-                                Series="{x:Bind ViewModelData.SeriesPressure}"
-                                ZoomMode="X"/>
-        </Border>-->
-        
+                Margin="4,0,4,4">
+
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Text="Temperature (°C)"
+                           VerticalAlignment="Center"
+                           HorizontalAlignment="Center" 
+                           RenderTransformOrigin="0.5,0.5"
+                           Style="{StaticResource NavigationViewItemHeaderTextStyle}">
+                    <TextBlock.RenderTransform>
+                        <RotateTransform Angle="270"/>
+                    </TextBlock.RenderTransform>
+                </TextBlock>
+
+                <StackPanel Grid.Column="1"
+                            VerticalAlignment="Center"
+                            HorizontalAlignment="Stretch">
+
+                    <lvc:CartesianChart TooltipPosition="Top"
+                                        Series="{x:Bind ViewModelData.SeriesTemperature}"
+                                        ZoomMode="X"
+                                        MinHeight="350"/>
+
+                    <TextBlock Text="Sample Number"
+                               Style="{StaticResource NavigationViewItemHeaderTextStyle}"
+                               HorizontalAlignment="Center"/>
+                </StackPanel>
+            </Grid>
+        </Border>
 
 
-        
+        <Border Grid.Row="3"
+                BorderBrush="DarkCyan"
+                BorderThickness="1"
+                Margin="4,0,4,4">
 
-        
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
 
+                <TextBlock Text="Pressure (psi)"
+                           VerticalAlignment="Center"
+                           HorizontalAlignment="Center"
+                           RenderTransformOrigin="0.5,0.5"
+                           Style="{StaticResource NavigationViewItemHeaderTextStyle}">
+                    <TextBlock.RenderTransform>
+                        <RotateTransform Angle="270"/>
+                    </TextBlock.RenderTransform>
+                </TextBlock>
 
+                <StackPanel Grid.Column="1"
+                            VerticalAlignment="Center"
+                            HorizontalAlignment="Stretch">
 
+                    <lvc:CartesianChart TooltipPosition="Top"
+                                        Series="{x:Bind ViewModelData.SeriesPressure}"
+                                        ZoomMode="X"
+                                        MinHeight="350"/>
 
+                    <TextBlock Text="Sample Number"
+                               Style="{StaticResource NavigationViewItemHeaderTextStyle}"
+                               HorizontalAlignment="Center"/>
+
+                </StackPanel>
+            </Grid>
+        </Border>
 
     </Grid>
 </Page>
