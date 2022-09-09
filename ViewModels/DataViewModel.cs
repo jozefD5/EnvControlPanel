@@ -49,6 +49,8 @@ namespace EnvControlPanel.ViewModels
 
 
 
+
+
         public DataViewModel()
         {
             //Settings
@@ -198,11 +200,6 @@ namespace EnvControlPanel.ViewModels
 
             UpdateReadings();
         }
-
-
-
-
-        
 
 
 

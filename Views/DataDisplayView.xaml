@@ -14,6 +14,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="*"/> 
         </Grid.RowDefinitions>
@@ -23,11 +24,30 @@
                    Style="{StaticResource TitleLargeTextBlockStyle}"
                    Margin="10"/>
 
+
+        <StackPanel Grid.Row="1">
+
+            <StackPanel Orientation="Horizontal"
+                    Margin="4,0,0,20">
+
+                <Button Content="TempButton"
+                        Command="{x:Bind ViewModelData.AddTempCommand}"
+                        Margin="0,0,10,0"/>
+
+            </StackPanel>
+
+            <Border BorderBrush="DarkCyan"
+                    BorderThickness="1.5"/>
+
+        </StackPanel>
+
+        
+
         
           
 
-        <Grid Grid.Row="1"
-              Margin="4,20,0,40">
+        <Grid Grid.Row="2"
+              Margin="4,0,0,10">
 
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
@@ -51,9 +71,6 @@
                                   IsIndeterminate="False" 
                                   Value="{x:Bind ViewModelData.LastTemp, Mode=OneWay}"/>
                 </Grid>
-
-                <Button Content="TempButton"
-                        Command="{x:Bind ViewModelData.AddTempCommand}"/>
             </StackPanel>
 
 
@@ -74,14 +91,13 @@
                                   Value="{x:Bind ViewModelData.LastPressure, Mode=OneWay}"/>
                 </Grid>
             </StackPanel>
-
         </Grid>
 
         
         
         
         
-        <Border Grid.Row="2"
+        <Border Grid.Row="3"
                 BorderBrush="DarkCyan"
                 BorderThickness="1"
                 Margin="4,0,4,4">
@@ -119,7 +135,7 @@
         </Border>
 
 
-        <Border Grid.Row="3"
+        <Border Grid.Row="4"
                 BorderBrush="DarkCyan"
                 BorderThickness="1"
                 Margin="4,0,4,4">
