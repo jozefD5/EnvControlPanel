@@ -17,6 +17,7 @@ using Windows.Foundation;
 using Windows.Foundation.Collections;
 
 using EnvControlPanel.ViewModels;
+using Windows.UI.ViewManagement;
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
@@ -33,7 +34,8 @@ namespace EnvControlPanel
         /// </summary>
    
 
-        public static MainViewModel ViewMode { get; } = new MainViewModel();
+        public static MainViewModel ViewModelMain { get; } = new MainViewModel();
+        public static DataViewModel ViewModelData { get; } = new DataViewModel();
 
 
 

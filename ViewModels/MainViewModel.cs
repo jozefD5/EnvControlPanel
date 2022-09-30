@@ -21,7 +21,7 @@ namespace EnvControlPanel.ViewModels
 
         private SerialComDevice selectedComsPort;
 
-        private SerialComDevice EmptyComPort;
+        private readonly SerialComDevice EmptyComPort;
 
 
         private int selectIndex;
@@ -36,7 +36,9 @@ namespace EnvControlPanel.ViewModels
         public ICommand ConnectCommand { get; set;}
         public ICommand DisconnectCommand { get; set;}
 
-        
+        public ICommand SerialTestCommand { get; set;}
+        public ICommand SerialTestCommand_2 { get; set; }
+
 
 
 
@@ -54,9 +56,12 @@ namespace EnvControlPanel.ViewModels
             RefreshCommand = new RelayCommand(RefreshDeviceList);
             ConnectCommand = new RelayCommand(ConnectToDevice);
             DisconnectCommand = new RelayCommand(DisconnectDevice);
+            SerialTestCommand = new RelayCommand(SerialSendStr);
+            SerialTestCommand_2 = new RelayCommand(SerialSendStr_2);
 
             //Get list of all connected devices
             RefreshDeviceList();
+
         }
 
 
@@ -80,12 +85,26 @@ namespace EnvControlPanel.ViewModels
             {
                 //only enable connect if selected device is not empty com port
                 SetProperty(ref selectIndex, value);
-                SetProperty(ref selectedComsPort, serialItems[selectIndex]);
 
-                EnableConnect = (selectIndex > 0);
-                EnableDisconnect = selectedComsPort.IsOpen;
+                if(value > 0)
+                {
+                    SetProperty(ref selectedComsPort, serialItems[value]);
+
+                    EnableConnect = true;
+                    EnableDisconnect = selectedComsPort.IsOpen;
+                }
+                else
+                {
+                    EnableConnect = false;
+                    EnableDisconnect = false;
+                }
+                
             }
         }
+
+
+
+
 
         public bool EnableConnect
         {
@@ -116,6 +135,7 @@ namespace EnvControlPanel.ViewModels
             ClearSerialItems();
 
             EnableDisconnect = false;
+
 
             foreach (string str in SerialPort.GetPortNames())
             {
@@ -160,15 +180,42 @@ namespace EnvControlPanel.ViewModels
         //Disconnect from selected device
         public void DisconnectDevice()
         {
-            if (selectedComsPort.IsOpen)
+            try
             {
-                selectedComsPort.Close();
+                if ((selectedComsPort.IsOpen) && (selectIndex > 0))
+                {
+                    selectedComsPort.Close();
+                }
+                EnableDisconnect = selectedComsPort.IsOpen;
+
             }
-            EnableDisconnect = selectedComsPort.IsOpen;
+            catch(Exception ex)
+            {
+                Debug.WriteLine("Acrtion: DisconnectDevice()     Exception");
+                Debug.WriteLine(ex.Message);
+            }
+            
         }
 
 
 
 
+
+        //Serial test function, send string via serial
+        public void SerialSendStr()
+        {
+            string str = "env_aenvm\t";
+            selectedComsPort.SerialWriteLine(str);
+        }
+
+        public void SerialSendStr_2()
+        {
+            string str = "env_deaenvm\t";
+            selectedComsPort.SerialWriteLine(str);
+        }
+
+
     }
+
+
 }

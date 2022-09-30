@@ -35,26 +35,27 @@
             
             <Button Content="Refresh List"
                     FontWeight="Bold"
-                    Command="{x:Bind ViewModel.RefreshCommand}"
+                    Command="{x:Bind ViewModelMain.RefreshCommand}"
                     Margin="0,0,8,0"/>
 
             <Button Content="Connect"
                     FontWeight="Bold"
-                    IsEnabled="{x:Bind ViewModel.EnableConnect, Mode=OneWay}"
-                    Command="{x:Bind ViewModel.ConnectCommand, Mode=OneWay}"
+                    IsEnabled="{x:Bind ViewModelMain.EnableConnect, Mode=OneWay}"
+                    Command="{x:Bind ViewModelMain.ConnectCommand, Mode=OneWay}"
                     Margin="0,0,8,0"/>
 
             <Button Content="Disconnect"
                     FontWeight="Bold"
-                    IsEnabled="{x:Bind ViewModel.EnableDisconnect, Mode=OneWay}"
-                    Command="{x:Bind ViewModel.DisconnectCommand, Mode=OneWay}"/>
+                    IsEnabled="{x:Bind ViewModelMain.EnableDisconnect, Mode=OneWay}"
+                    Command="{x:Bind ViewModelMain.DisconnectCommand, Mode=OneWay}"/>
+
 
         </StackPanel>
 
 
         <ListView Grid.Row="2"
-                  ItemsSource="{x:Bind ViewModel.SerialItems, Mode=OneTime}"
-                  SelectedIndex="{x:Bind ViewModel.SelectIndex, Mode=TwoWay}">
+                  ItemsSource="{x:Bind ViewModelMain.SerialItems, Mode=OneTime}"
+                  SelectedIndex="{x:Bind ViewModelMain.SelectIndex, Mode=TwoWay}">
 
             <ListView.HeaderTemplate>
                 <DataTemplate>

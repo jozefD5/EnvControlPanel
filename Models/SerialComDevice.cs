@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using EnvControlPanel.Enums;
 using EnvControlPanel.ViewModels;
 using System.IO.Ports;
-
+using System.Diagnostics;
 
 namespace EnvControlPanel.Models
 {
@@ -80,6 +80,15 @@ namespace EnvControlPanel.Models
 
 
 
+        public void SerialWriteLine(string str)
+        {
+            serialPort.WriteLine(str);
+        }
+
+
+
+
+
         public void Close()
         {
             if (IsOpen)
@@ -91,14 +100,23 @@ namespace EnvControlPanel.Models
 
         public void Open()
         {
-            if (!IsOpen)
+            try
             {
-                serialPort.Open();
-            }
-            CheckConnect();
-        }
+                if (!IsOpen)
+                {
+                    serialPort.Open();
 
-        
+                    serialPort.DataReceived += new SerialDataReceivedEventHandler(DataReceivedHandler);
+                }
+                CheckConnect();
+
+            }
+            catch(System.IO.FileNotFoundException ex)
+            {
+                Debug.WriteLine("Exception: " + ex.ToString());
+                ConnectStatus = ComStatus.error;
+            }
+        }
 
 
         private void CheckConnect()
@@ -115,15 +133,26 @@ namespace EnvControlPanel.Models
 
 
 
-
         //Set default serial config parameters
         private void SetSerialConf()
         {
-            BaudRate = 115200;
+            BaudRate = 230400;
             DataBits = 8;
             ParityBits = Parity.None;
             StopBit = StopBits.One;
         }
+
+
+        private void DataReceivedHandler(object sender, SerialDataReceivedEventArgs e)
+        {
+            SerialPort sp = (SerialPort)sender;
+
+            string dataStream = sp.ReadLine();
+            int dataCount = dataStream.Length;
+
+            Debug.WriteLine($"sl:   {dataStream}");
+        }
+
 
     }
 }
