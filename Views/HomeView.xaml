@@ -49,6 +49,7 @@
                     IsEnabled="{x:Bind ViewModelMain.EnableDisconnect, Mode=OneWay}"
                     Command="{x:Bind ViewModelMain.DisconnectCommand, Mode=OneWay}"/>
 
+
         </StackPanel>
 
 

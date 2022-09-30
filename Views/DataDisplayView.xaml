@@ -14,10 +14,15 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="*"/> 
+            <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
 
 
         <TextBlock Text="Data"
@@ -25,82 +30,71 @@
                    Margin="10"/>
 
 
-        <StackPanel Grid.Row="1">
+        <StackPanel Grid.Row="1"
+                    Grid.Column="0"
+                    Margin="4,20,0,0">
 
-            <StackPanel Orientation="Horizontal"
-                    Margin="4,0,0,20">
+            <Button Content="TempButton"
+                    Command="{x:Bind ViewModelData.AddTempCommand}"/>
 
-                <Button Content="TempButton"
-                        Command="{x:Bind ViewModelData.AddTempCommand}"
-                        Margin="0,0,10,0"/>
-
-            </StackPanel>
-
-            <Border BorderBrush="DarkCyan"
-                    BorderThickness="1.5"/>
+            <ToggleSwitch Margin="0,10,0,0"/>
 
         </StackPanel>
 
         
-
         
-          
 
-        <Grid Grid.Row="2"
-              Margin="4,0,0,10">
+        <StackPanel Grid.Row="1"
+                    Grid.Column="1"
+                    Margin="0,20,0,0">
 
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
+            <TextBlock Text="Temperature"
+                       Style="{StaticResource SubtitleTextBlockStyle}"
+                       HorizontalAlignment="Center"
+                       Margin="0,0,0,10"/>
 
-
-            <StackPanel>
-                <TextBlock Text="Temperature"
-                           Style="{StaticResource SubtitleTextBlockStyle}"
+            <Grid>
+                <TextBlock Text="{x:Bind ViewModelData.LastTempStr, Mode=OneWay}"
                            HorizontalAlignment="Center"
-                           Margin="0,0,0,4"/>
+                           VerticalAlignment="Center"/>
 
-                <Grid>
-                    <TextBlock Text="{x:Bind ViewModelData.LastTempStr, Mode=OneWay}"
+                <ProgressRing Width="280" Height="280" 
+                              Maximum="{x:Bind ViewModelData.MaxTemp}"
+                              Minimum="{x:Bind ViewModelData.MinTemp}" 
+                              IsIndeterminate="False" 
+                              Value="{x:Bind ViewModelData.LastTemp, Mode=OneWay}"/>
+            </Grid>
+        </StackPanel>
+
+
+        <StackPanel Grid.Row="1"
+                    Grid.Column="2"
+                    Margin="50,20,0,0">
+
+            <TextBlock Text="Pressure"
+                       Style="{StaticResource SubtitleTextBlockStyle}"
+                       HorizontalAlignment="Center"
+                       Margin="0,0,0,4"/>
+
+            <Grid>
+                <TextBlock Text="{x:Bind ViewModelData.LastPressureStr, Mode=OneWay}"
                        HorizontalAlignment="Center"
                        VerticalAlignment="Center"/>
-                    <ProgressRing Width="280" Height="280" 
-                                  Maximum="{x:Bind ViewModelData.MaxTemp}"
-                                  Minimum="{x:Bind ViewModelData.MinTemp}" 
-                                  IsIndeterminate="False" 
-                                  Value="{x:Bind ViewModelData.LastTemp, Mode=OneWay}"/>
-                </Grid>
-            </StackPanel>
-
-
-            <StackPanel Grid.Column="2">
-                <TextBlock Text="Pressure"
-                           Style="{StaticResource SubtitleTextBlockStyle}"
-                           HorizontalAlignment="Center"
-                           Margin="0,0,0,4"/>
-
-                <Grid>
-                    <TextBlock Text="{x:Bind ViewModelData.LastPressureStr, Mode=OneWay}"
-                       HorizontalAlignment="Center"
-                       VerticalAlignment="Center"/>
-                    <ProgressRing Width="280" Height="280" 
+                <ProgressRing Width="280" Height="280" 
                                   Maximum="{x:Bind ViewModelData.MaxPressure}"
                                   Minimum="{x:Bind ViewModelData.MiniPressure}" 
                                   IsIndeterminate="False"
                                   Value="{x:Bind ViewModelData.LastPressure, Mode=OneWay}"/>
-                </Grid>
-            </StackPanel>
-        </Grid>
+            </Grid>
+        </StackPanel>
 
         
-        
-        
-        
-        <Border Grid.Row="3"
+
+        <Border Grid.Column="1" Grid.ColumnSpan="2"
+                Grid.Row="2"
                 BorderBrush="DarkCyan"
                 BorderThickness="1"
-                Margin="4,0,4,4">
+                Margin="0,20,20,0">
 
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -129,16 +123,21 @@
 
                     <TextBlock Text="Sample Number"
                                Style="{StaticResource NavigationViewItemHeaderTextStyle}"
-                               HorizontalAlignment="Center"/>
+                               HorizontalAlignment="Center"
+                               Margin="4"/>
                 </StackPanel>
             </Grid>
         </Border>
 
 
-        <Border Grid.Row="4"
+
+
+
+        <Border Grid.Column="1" Grid.ColumnSpan="2"
+                Grid.Row="3"
                 BorderBrush="DarkCyan"
                 BorderThickness="1"
-                Margin="4,0,4,4">
+                Margin="0,20,20,20">
 
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -167,11 +166,17 @@
 
                     <TextBlock Text="Sample Number"
                                Style="{StaticResource NavigationViewItemHeaderTextStyle}"
-                               HorizontalAlignment="Center"/>
+                               HorizontalAlignment="Center"
+                               Margin="4"/>
 
                 </StackPanel>
             </Grid>
         </Border>
 
+
+
+
+
+   
     </Grid>
 </Page>

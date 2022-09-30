@@ -36,7 +36,9 @@ namespace EnvControlPanel.ViewModels
         public ICommand ConnectCommand { get; set;}
         public ICommand DisconnectCommand { get; set;}
 
-        
+        public ICommand SerialTestCommand { get; set;}
+        public ICommand SerialTestCommand_2 { get; set; }
+
 
 
 
@@ -54,9 +56,12 @@ namespace EnvControlPanel.ViewModels
             RefreshCommand = new RelayCommand(RefreshDeviceList);
             ConnectCommand = new RelayCommand(ConnectToDevice);
             DisconnectCommand = new RelayCommand(DisconnectDevice);
+            SerialTestCommand = new RelayCommand(SerialSendStr);
+            SerialTestCommand_2 = new RelayCommand(SerialSendStr_2);
 
             //Get list of all connected devices
             RefreshDeviceList();
+
         }
 
 
@@ -175,15 +180,42 @@ namespace EnvControlPanel.ViewModels
         //Disconnect from selected device
         public void DisconnectDevice()
         {
-            if ((selectedComsPort.IsOpen) && (selectIndex > 0) )
+            try
             {
-                selectedComsPort.Close();
+                if ((selectedComsPort.IsOpen) && (selectIndex > 0))
+                {
+                    selectedComsPort.Close();
+                }
+                EnableDisconnect = selectedComsPort.IsOpen;
+
             }
-            EnableDisconnect = selectedComsPort.IsOpen;
+            catch(Exception ex)
+            {
+                Debug.WriteLine("Acrtion: DisconnectDevice()     Exception");
+                Debug.WriteLine(ex.Message);
+            }
+            
         }
 
 
 
 
+
+        //Serial test function, send string via serial
+        public void SerialSendStr()
+        {
+            string str = "env_aenvm\t";
+            selectedComsPort.SerialWriteLine(str);
+        }
+
+        public void SerialSendStr_2()
+        {
+            string str = "env_deaenvm\t";
+            selectedComsPort.SerialWriteLine(str);
+        }
+
+
     }
+
+
 }
