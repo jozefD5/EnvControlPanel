@@ -19,11 +19,8 @@ namespace EnvControlPanel.ViewModels
 
         private ObservableCollection<SerialComDevice> serialItems;
 
-        private SerialComDevice selectedComsPort;
-
         private readonly SerialComDevice EmptyComPort;
-
-
+        
         private int selectIndex;
 
         private int oldIndex;
@@ -35,9 +32,6 @@ namespace EnvControlPanel.ViewModels
         public ICommand RefreshCommand { get; set;}
         public ICommand ConnectCommand { get; set;}
         public ICommand DisconnectCommand { get; set;}
-
-        public ICommand SerialTestCommand { get; set;}
-        public ICommand SerialTestCommand_2 { get; set; }
 
 
 
@@ -56,8 +50,6 @@ namespace EnvControlPanel.ViewModels
             RefreshCommand = new RelayCommand(RefreshDeviceList);
             ConnectCommand = new RelayCommand(ConnectToDevice);
             DisconnectCommand = new RelayCommand(DisconnectDevice);
-            SerialTestCommand = new RelayCommand(SerialSendStr);
-            SerialTestCommand_2 = new RelayCommand(SerialSendStr_2);
 
             //Get list of all connected devices
             RefreshDeviceList();
@@ -88,10 +80,10 @@ namespace EnvControlPanel.ViewModels
 
                 if(value > 0)
                 {
-                    SetProperty(ref selectedComsPort, serialItems[value]);
+                    SetProperty(ref EnvDevice.Device, serialItems[value]);
 
                     EnableConnect = true;
-                    EnableDisconnect = selectedComsPort.IsOpen;
+                    EnableDisconnect = EnvDevice.Device.IsOpen;
                 }
                 else
                 {
@@ -101,10 +93,6 @@ namespace EnvControlPanel.ViewModels
                 
             }
         }
-
-
-
-
 
         public bool EnableConnect
         {
@@ -139,8 +127,7 @@ namespace EnvControlPanel.ViewModels
 
             foreach (string str in SerialPort.GetPortNames())
             {
-                Debug.WriteLine($"SerialCom: {str}");
-
+                //Debug.WriteLine($"SerialCom: {str}");
                 SerialItems.Add(new SerialComDevice(str));
             }
         }
@@ -169,8 +156,8 @@ namespace EnvControlPanel.ViewModels
                 serialItems[oldIndex].Close();
             }
 
-            selectedComsPort.Open();
-            EnableDisconnect = selectedComsPort.IsOpen;
+            EnvDevice.Device.Open();
+            EnableDisconnect = EnvDevice.Device.IsOpen;
 
             //set old index to current selected device
             oldIndex = selectIndex;
@@ -182,11 +169,11 @@ namespace EnvControlPanel.ViewModels
         {
             try
             {
-                if ((selectedComsPort.IsOpen) && (selectIndex > 0))
+                if ((EnvDevice.Device.IsOpen) && (selectIndex > 0))
                 {
-                    selectedComsPort.Close();
+                    EnvDevice.Device.Close();
                 }
-                EnableDisconnect = selectedComsPort.IsOpen;
+                EnableDisconnect = EnvDevice.Device.IsOpen;
 
             }
             catch(Exception ex)
@@ -197,22 +184,6 @@ namespace EnvControlPanel.ViewModels
             
         }
 
-
-
-
-
-        //Serial test function, send string via serial
-        public void SerialSendStr()
-        {
-            string str = "env_aenvm\t";
-            selectedComsPort.SerialWriteLine(str);
-        }
-
-        public void SerialSendStr_2()
-        {
-            string str = "env_deaenvm\t";
-            selectedComsPort.SerialWriteLine(str);
-        }
 
 
     }

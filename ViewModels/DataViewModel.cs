@@ -46,7 +46,7 @@ namespace EnvControlPanel.ViewModels
         public ObservableCollection<ISeries> SeriesTemperature { get; set; }
         public ObservableCollection<ISeries> SeriesPressure { get; set; }
 
-
+        private SerialComDevice selectedComsPort;
 
 
 
@@ -100,6 +100,7 @@ namespace EnvControlPanel.ViewModels
             };
 
             AddTempCommand = new RelayCommand(AddTemp);
+
         }
 
 
