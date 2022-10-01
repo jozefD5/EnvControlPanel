@@ -38,19 +38,20 @@ namespace EnvControlPanel.ViewModels
 
         public double MaxPressure { get; set; }
         public double MiniPressure { get; set; }
-        
+
+        private bool deviceStatus;
 
 
         public ICommand AddTempCommand { get; set; }
+        public ICommand SetDeviceStateCommand { get; set; }
 
         public ObservableCollection<ISeries> SeriesTemperature { get; set; }
         public ObservableCollection<ISeries> SeriesPressure { get; set; }
 
-        private SerialComDevice selectedComsPort;
 
 
 
-
+          
         public DataViewModel()
         {
             //Settings
@@ -69,8 +70,12 @@ namespace EnvControlPanel.ViewModels
             lastPressure = pressureData.LastOrDefault();
             lastPressureStr = lastPressure.ToString() + " psi";
 
+            
+            //Set initial device status
+            deviceStatus = false;
 
 
+            //Setup temperature graph
             SeriesTemperature = new ObservableCollection<ISeries>
             {
                 new LineSeries<double>
@@ -85,6 +90,7 @@ namespace EnvControlPanel.ViewModels
                 }
             };
 
+            //Setup pressure graph
             SeriesPressure = new ObservableCollection<ISeries>
             {
                 new LineSeries<double>
@@ -99,7 +105,9 @@ namespace EnvControlPanel.ViewModels
                 }
             };
 
+
             AddTempCommand = new RelayCommand(AddTemp);
+            SetDeviceStateCommand = new RelayCommand(SetDeviceState);
 
         }
 
@@ -174,6 +182,20 @@ namespace EnvControlPanel.ViewModels
         }
 
 
+        public bool DeviceStatus
+        {
+            get => deviceStatus;
+
+            set
+            {
+                SetProperty(ref deviceStatus, value);
+
+                SetDeviceState();
+            }
+        }
+
+
+
 
 
         private void UpdateReadings()
@@ -200,8 +222,27 @@ namespace EnvControlPanel.ViewModels
             PressureData.Add(temp2);
 
             UpdateReadings();
+            
         }
 
+
+        //Send activate/deactivate monitoring command and request monitoring status
+        public void SetDeviceState()
+        {
+            Debug.WriteLine($"DevStatus: {deviceStatus}");
+
+            if (deviceStatus)
+            {
+                EnvDevice.Device.SerialWriteLine(EnvDevice.mt_tx_activate);
+            }
+            else
+            {
+                EnvDevice.Device.SerialWriteLine(EnvDevice.mt_tx_deactivate);
+            }
+
+
+            EnvDevice.Device.SerialWriteLine(EnvDevice.mt_tx_rstatus);
+        }
 
 
     }
