@@ -39,6 +39,8 @@ namespace EnvControlPanel.ViewModels
         public double MaxPressure { get; set; }
         public double MiniPressure { get; set; }
 
+        private int collectionSizeLimit;
+
         private bool deviceStatus;
 
 
@@ -60,6 +62,8 @@ namespace EnvControlPanel.ViewModels
 
             MaxPressure = 120;
             MiniPressure = -20;
+
+            collectionSizeLimit = 50;
 
             //Setup
             temperatureData = new ObservableCollection<double> {0.0};
@@ -207,7 +211,26 @@ namespace EnvControlPanel.ViewModels
             LastPressureStr = lastPressure.ToString() + " psi";
         }
 
-     
+        
+
+
+        private void LimitCollectionSize(ObservableCollection<double> collection)
+        {
+            int size = collection.Count();
+
+            Debug.WriteLine($"Size: {size}");
+
+            //Remove first two elements
+            if(size >= collectionSizeLimit)
+            {
+
+                for(int i=0; i< (collectionSizeLimit/2); i++)
+                {
+                    collection.RemoveAt(i);
+                }
+            }
+        }
+
 
         public void AddTemp()
         {
@@ -220,6 +243,9 @@ namespace EnvControlPanel.ViewModels
 
             TemperatureData.Add(temp1);
             PressureData.Add(temp2);
+
+            LimitCollectionSize(TemperatureData);
+            LimitCollectionSize(PressureData);
 
             UpdateReadings();
             
