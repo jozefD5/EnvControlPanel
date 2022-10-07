@@ -111,6 +111,9 @@
             </Grid>
         </StackPanel>
 
+
+        
+        
         
 
         <Border Grid.Column="1" Grid.ColumnSpan="2"
@@ -125,6 +128,11 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
 
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
                 <TextBlock Text="Temperature (°C)"
                            VerticalAlignment="Center"
                            HorizontalAlignment="Center" 
@@ -135,25 +143,19 @@
                     </TextBlock.RenderTransform>
                 </TextBlock>
 
-                <StackPanel Grid.Column="1"
-                            VerticalAlignment="Center"
-                            HorizontalAlignment="Stretch">
+                <lvc:CartesianChart Grid.Column="1" 
+                                    TooltipPosition="Top"
+                                    Series="{x:Bind ViewModelData.SeriesTemperature}"
+                                    ZoomMode="X"/>
 
-                    <lvc:CartesianChart TooltipPosition="Top"
-                                        Series="{x:Bind ViewModelData.SeriesTemperature}"
-                                        ZoomMode="X"
-                                        MinHeight="350"/>
-
-                    <TextBlock Text="Sample Number"
-                               Style="{StaticResource NavigationViewItemHeaderTextStyle}"
-                               HorizontalAlignment="Center"
-                               Margin="4"/>
-                </StackPanel>
+                <TextBlock Grid.Row="1"
+                           Grid.Column="1" 
+                           Text="Sample Number"
+                           Style="{StaticResource NavigationViewItemHeaderTextStyle}"
+                           HorizontalAlignment="Center"
+                           Margin="4"/>
             </Grid>
         </Border>
-
-
-
 
 
         <Border Grid.Column="1" Grid.ColumnSpan="2"
@@ -168,9 +170,14 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
 
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
                 <TextBlock Text="Pressure (psi)"
                            VerticalAlignment="Center"
-                           HorizontalAlignment="Center"
+                           HorizontalAlignment="Center" 
                            RenderTransformOrigin="0.5,0.5"
                            Style="{StaticResource NavigationViewItemHeaderTextStyle}">
                     <TextBlock.RenderTransform>
@@ -178,25 +185,19 @@
                     </TextBlock.RenderTransform>
                 </TextBlock>
 
-                <StackPanel Grid.Column="1"
-                            VerticalAlignment="Center"
-                            HorizontalAlignment="Stretch">
+                <lvc:CartesianChart Grid.Column="1" 
+                                    TooltipPosition="Top"
+                                    Series="{x:Bind ViewModelData.SeriesPressure}"
+                                    ZoomMode="X"/>
 
-                    <lvc:CartesianChart TooltipPosition="Top"
-                                        Series="{x:Bind ViewModelData.SeriesPressure}"
-                                        ZoomMode="X"
-                                        MinHeight="350"/>
-
-                    <TextBlock Text="Sample Number"
-                               Style="{StaticResource NavigationViewItemHeaderTextStyle}"
-                               HorizontalAlignment="Center"
-                               Margin="4"/>
-
-                </StackPanel>
+                <TextBlock Grid.Row="1"
+                           Grid.Column="1" 
+                           Text="Sample Number"
+                           Style="{StaticResource NavigationViewItemHeaderTextStyle}"
+                           HorizontalAlignment="Center"
+                           Margin="4"/>
             </Grid>
         </Border>
-
-
 
 
 
