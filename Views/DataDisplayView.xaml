@@ -43,8 +43,12 @@
 
             <ToggleSwitch IsOn="{x:Bind ViewModelData.DeviceStatus, Mode=TwoWay}"/>
 
-            
-            
+            <Button Content="Read Device Status"
+                    HorizontalAlignment="Stretch"
+                    Command="{x:Bind ViewModelData.ReadDeviceStatusCommand}"/>
+
+
+
 
             <TextBlock Text="Mode"
                        Style="{StaticResource SubtitleTextBlockStyle}"
@@ -112,9 +116,6 @@
         </StackPanel>
 
 
-        
-        
-        
 
         <Border Grid.Column="1" Grid.ColumnSpan="2"
                 Grid.Row="2"
@@ -200,7 +201,5 @@
         </Border>
 
 
-
-   
     </Grid>
 </Page>

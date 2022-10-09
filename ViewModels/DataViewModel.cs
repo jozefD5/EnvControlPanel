@@ -46,6 +46,7 @@ namespace EnvControlPanel.ViewModels
 
         public ICommand AddTempCommand { get; set; }
         public ICommand SetDeviceStateCommand { get; set; }
+        public ICommand ReadDeviceStatusCommand { get; set; }
 
         public ObservableCollection<ISeries> SeriesTemperature { get; set; }
         public ObservableCollection<ISeries> SeriesPressure { get; set; }
@@ -112,6 +113,7 @@ namespace EnvControlPanel.ViewModels
 
             AddTempCommand = new RelayCommand(AddTemp);
             SetDeviceStateCommand = new RelayCommand(SetDeviceState);
+            ReadDeviceStatusCommand = new RelayCommand(ReadDeviceStatus);
 
         }
 
@@ -193,7 +195,6 @@ namespace EnvControlPanel.ViewModels
             set
             {
                 SetProperty(ref deviceStatus, value);
-
                 SetDeviceState();
             }
         }
@@ -252,22 +253,43 @@ namespace EnvControlPanel.ViewModels
         }
 
 
+
+
+
+
+
+
+
+
+
         //Send activate/deactivate monitoring command and request monitoring status
         public void SetDeviceState()
         {
-            Debug.WriteLine($"DevStatus: {deviceStatus}");
-
             if (deviceStatus)
             {
-                EnvDevice.Device.SerialWriteLine(EnvDevice.mt_tx_activate);
+                EnvDevice.Device.SerialWrite(EnvDevice.mt_tx_activate);
             }
             else
             {
-                EnvDevice.Device.SerialWriteLine(EnvDevice.mt_tx_deactivate);
+                EnvDevice.Device.SerialWrite(EnvDevice.mt_tx_deactivate);
             }
+        }
 
 
-            EnvDevice.Device.SerialWriteLine(EnvDevice.mt_tx_rstatus);
+
+
+
+
+
+
+
+
+
+
+        //Send command to read device monitoring status
+        public void ReadDeviceStatus()
+        {
+            EnvDevice.Device.SerialWrite(EnvDevice.mt_tx_rstatus);
         }
 
 

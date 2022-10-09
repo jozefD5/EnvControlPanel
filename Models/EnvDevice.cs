@@ -19,7 +19,9 @@ namespace EnvControlPanel.Models
         public static string mt_tx_rstatus = "env_rstatus\t";             //read monitoring status
 
         //Serial RX commands 
-        private static string mt_rx_status = "env_status";                
+        public static string mt_rx_status = "env_status";
+        public static string mt_rx_temp_data = "env_temp";
+        public static string mt_rx_pres_data = "env_pres";
 
 
 

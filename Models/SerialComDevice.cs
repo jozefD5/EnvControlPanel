@@ -7,6 +7,8 @@ using EnvControlPanel.Enums;
 using EnvControlPanel.ViewModels;
 using System.IO.Ports;
 using System.Diagnostics;
+using EnvControlPanel.Models;
+using System.Text.RegularExpressions;
 
 namespace EnvControlPanel.Models
 {
@@ -80,14 +82,13 @@ namespace EnvControlPanel.Models
 
 
 
-        public void SerialWriteLine(string str)
+        public void SerialWrite(string str)
         {
-            serialPort.WriteLine(str);
+            if (IsOpen)
+            {
+                serialPort.Write(str);
+            }
         }
-
-
-
-
 
         public void Close()
         {
@@ -143,14 +144,40 @@ namespace EnvControlPanel.Models
         }
 
 
+
+
+
+        private void DataProcess(string rxData)
+        {
+            string str = new string((from c in rxData
+                                     where char.IsDigit(c) || c == '.'
+                                     select c).ToArray());
+
+        }
+
+     
+
+
+
         private void DataReceivedHandler(object sender, SerialDataReceivedEventArgs e)
         {
             SerialPort sp = (SerialPort)sender;
 
             string dataStream = sp.ReadLine();
-            int dataCount = dataStream.Length;
+            //int dataCount = dataStream.Length;
+            //Debug.WriteLine($"sl:   {dataStream}");
 
-            Debug.WriteLine($"sl:   {dataStream}");
+            if (dataStream.Contains(EnvDevice.mt_rx_temp_data))
+            {
+                
+
+                
+
+                //Debug.WriteLine($"Temp: {str}");
+            }
+
+
+
         }
 
 

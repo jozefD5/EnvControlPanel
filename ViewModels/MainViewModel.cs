@@ -90,7 +90,6 @@ namespace EnvControlPanel.ViewModels
                     EnableConnect = false;
                     EnableDisconnect = false;
                 }
-                
             }
         }
 
@@ -121,20 +120,16 @@ namespace EnvControlPanel.ViewModels
         public void RefreshDeviceList()
         {
             ClearSerialItems();
-
             EnableDisconnect = false;
-
 
             foreach (string str in SerialPort.GetPortNames())
             {
-                //Debug.WriteLine($"SerialCom: {str}");
                 SerialItems.Add(new SerialComDevice(str));
             }
         }
 
         public void ClearSerialItems()
         {
-
             //Close all ports
             foreach (SerialComDevice device in serialItems)
             {
@@ -181,7 +176,6 @@ namespace EnvControlPanel.ViewModels
                 Debug.WriteLine("Acrtion: DisconnectDevice()     Exception");
                 Debug.WriteLine(ex.Message);
             }
-            
         }
 
 
