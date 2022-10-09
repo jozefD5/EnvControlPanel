@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO.Ports;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,7 +12,6 @@ namespace EnvControlPanel.Models
     {
         //Selected/Active serial devices
         public static SerialComDevice Device;
-
 
 
         //Serial TX commands
@@ -25,5 +26,51 @@ namespace EnvControlPanel.Models
 
 
 
+
+
+
+
+
+
+
+        //Open serial com port and assign received data handler
+        public static void OpenComs()
+        {
+            if (Device.Open())
+            {
+                Device.Port.DataReceived += new SerialDataReceivedEventHandler(DataReceivedHandler);
+            }
+        }
+
+
+
+        //Output if com port is open
+        public static bool IsOpen
+        {
+            get => Device.IsOpen;
+        }
+
+
+
+
+
+
+
+
+
+        private static void DataReceivedHandler(object sender, SerialDataReceivedEventArgs e)
+        {
+            SerialPort sp = (SerialPort)sender;
+            string dataStream = sp.ReadLine();
+
+            Debug.WriteLine($"Temp: {dataStream}");
+
+            /*
+            if (dataStream.Contains(EnvDevice.mt_rx_temp_data))
+            {
+                //Debug.WriteLine($"Temp: {str}");
+            }
+            */
+        }
     }
 }

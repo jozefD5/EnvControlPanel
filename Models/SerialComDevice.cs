@@ -23,17 +23,19 @@ namespace EnvControlPanel.Models
 
         public SerialComDevice(string name)
         {
-            ConnectStatus = ComStatus.disconnect;
-
             serialPort = new SerialPort
             {
                 PortName = name
             };
 
+            ConnectStatus = ComStatus.disconnect;
             SetSerialConf();
         }
 
-
+        public SerialPort Port
+        {
+            get { return serialPort; }
+        }
 
         public string PortName
         {
@@ -99,23 +101,27 @@ namespace EnvControlPanel.Models
             CheckConnect();
         }
 
-        public void Open()
+
+        //Open serial port and add data received handler
+        public bool Open()
         {
             try
             {
                 if (!IsOpen)
                 {
                     serialPort.Open();
-
                     serialPort.DataReceived += new SerialDataReceivedEventHandler(DataReceivedHandler);
                 }
-                CheckConnect();
 
+                CheckConnect();
+                return true;
             }
             catch(System.IO.FileNotFoundException ex)
             {
                 Debug.WriteLine("Exception: " + ex.ToString());
                 ConnectStatus = ComStatus.error;
+
+                return false;
             }
         }
 
@@ -147,6 +153,8 @@ namespace EnvControlPanel.Models
 
 
 
+
+
         private void DataProcess(string rxData)
         {
             string str = new string((from c in rxData
@@ -158,14 +166,10 @@ namespace EnvControlPanel.Models
      
 
 
-
         private void DataReceivedHandler(object sender, SerialDataReceivedEventArgs e)
         {
             SerialPort sp = (SerialPort)sender;
-
             string dataStream = sp.ReadLine();
-            //int dataCount = dataStream.Length;
-            //Debug.WriteLine($"sl:   {dataStream}");
 
             if (dataStream.Contains(EnvDevice.mt_rx_temp_data))
             {
@@ -175,9 +179,6 @@ namespace EnvControlPanel.Models
 
                 //Debug.WriteLine($"Temp: {str}");
             }
-
-
-
         }
 
 

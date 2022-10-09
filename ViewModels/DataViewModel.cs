@@ -40,7 +40,6 @@ namespace EnvControlPanel.ViewModels
         public double MiniPressure { get; set; }
 
         private int collectionSizeLimit;
-
         private bool deviceStatus;
 
 
@@ -52,7 +51,7 @@ namespace EnvControlPanel.ViewModels
         public ObservableCollection<ISeries> SeriesPressure { get; set; }
 
 
-
+        
 
           
         public DataViewModel()
@@ -118,13 +117,11 @@ namespace EnvControlPanel.ViewModels
         }
 
 
-    
 
 
 
+        //Temperature data control section
 
-
-        //Temperature 
         public ObservableCollection<double> TemperatureData
         {
             get => temperatureData;
@@ -156,7 +153,9 @@ namespace EnvControlPanel.ViewModels
         }
 
 
-        //Pressure
+
+        //Pressure data control section
+
         public ObservableCollection<double> PressureData
         {
             get => pressureData;
@@ -188,20 +187,6 @@ namespace EnvControlPanel.ViewModels
         }
 
 
-        public bool DeviceStatus
-        {
-            get => deviceStatus;
-
-            set
-            {
-                SetProperty(ref deviceStatus, value);
-                SetDeviceState();
-            }
-        }
-
-
-
-
 
         private void UpdateReadings()
         {
@@ -212,9 +197,6 @@ namespace EnvControlPanel.ViewModels
             LastPressureStr = lastPressure.ToString() + " psi";
         }
 
-        
-
-
         private void LimitCollectionSize(ObservableCollection<double> collection)
         {
             int size = collection.Count();
@@ -224,7 +206,6 @@ namespace EnvControlPanel.ViewModels
             //Remove first two elements
             if(size >= collectionSizeLimit)
             {
-
                 for(int i=0; i< (collectionSizeLimit/2); i++)
                 {
                     collection.RemoveAt(i);
@@ -232,15 +213,12 @@ namespace EnvControlPanel.ViewModels
             }
         }
 
-
         public void AddTemp()
         {
-
             Random tempVal = new();
 
             double temp1 = tempVal.Next(-10, 120);
             double temp2 = tempVal.Next(-5, 120);
-
 
             TemperatureData.Add(temp1);
             PressureData.Add(temp2);
@@ -249,15 +227,23 @@ namespace EnvControlPanel.ViewModels
             LimitCollectionSize(PressureData);
 
             UpdateReadings();
-            
         }
 
 
 
 
+        //General control section
+       
+        public bool DeviceStatus
+        {
+            get => deviceStatus;
 
-
-
+            set
+            {
+                SetProperty(ref deviceStatus, value);
+                SetDeviceState();
+            }
+        }
 
 
 
@@ -274,16 +260,6 @@ namespace EnvControlPanel.ViewModels
                 EnvDevice.Device.SerialWrite(EnvDevice.mt_tx_deactivate);
             }
         }
-
-
-
-
-
-
-
-
-
-
 
 
         //Send command to read device monitoring status

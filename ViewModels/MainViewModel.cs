@@ -83,7 +83,7 @@ namespace EnvControlPanel.ViewModels
                     SetProperty(ref EnvDevice.Device, serialItems[value]);
 
                     EnableConnect = true;
-                    EnableDisconnect = EnvDevice.Device.IsOpen;
+                    EnableDisconnect = EnvDevice.IsOpen;
                 }
                 else
                 {
@@ -151,8 +151,8 @@ namespace EnvControlPanel.ViewModels
                 serialItems[oldIndex].Close();
             }
 
-            EnvDevice.Device.Open();
-            EnableDisconnect = EnvDevice.Device.IsOpen;
+            EnvDevice.OpenComs();
+            EnableDisconnect = EnvDevice.IsOpen;
 
             //set old index to current selected device
             oldIndex = selectIndex;
@@ -164,11 +164,11 @@ namespace EnvControlPanel.ViewModels
         {
             try
             {
-                if ((EnvDevice.Device.IsOpen) && (selectIndex > 0))
+                if ((EnvDevice.IsOpen) && (selectIndex > 0))
                 {
                     EnvDevice.Device.Close();
                 }
-                EnableDisconnect = EnvDevice.Device.IsOpen;
+                EnableDisconnect = EnvDevice.IsOpen;
 
             }
             catch(Exception ex)
