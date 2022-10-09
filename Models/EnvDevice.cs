@@ -13,23 +13,14 @@ namespace EnvControlPanel.Models
         //Selected/Active serial devices
         public static SerialComDevice Device;
 
-
-        //Serial TX commands
-        public static string mt_tx_activate = "env_aenvm\t";              //activate monitoring thread
-        public static string mt_tx_deactivate = "env_deaenvm\t";          //deactivate monitoring thread
-        public static string mt_tx_rstatus = "env_rstatus\t";             //read monitoring status
-
-        //Serial RX commands 
-        public static string mt_rx_status = "env_status";
-        public static string mt_rx_temp_data = "env_temp";
-        public static string mt_rx_pres_data = "env_pres";
+        //Received data
+        public static DataFlow dataFlow;
 
 
-
-
-
-
-
+        static EnvDevice()
+        {
+            dataFlow = new DataFlow();
+        }
 
 
 
@@ -43,7 +34,6 @@ namespace EnvControlPanel.Models
         }
 
 
-
         //Output if com port is open
         public static bool IsOpen
         {
@@ -51,26 +41,35 @@ namespace EnvControlPanel.Models
         }
 
 
-
-
-
-
-
-
-
+        //UART received data handler, triggers new data event
         private static void DataReceivedHandler(object sender, SerialDataReceivedEventArgs e)
         {
             SerialPort sp = (SerialPort)sender;
             string dataStream = sp.ReadLine();
-
-            Debug.WriteLine($"Temp: {dataStream}");
-
-            /*
-            if (dataStream.Contains(EnvDevice.mt_rx_temp_data))
-            {
-                //Debug.WriteLine($"Temp: {str}");
-            }
-            */
+            dataFlow.OnNewEnvData(dataStream);
         }
+
     }
+
+
+
+
+
+    //List of available serial commands, supported instructions
+    public static class EnvCommand
+    {
+        //Serial TX commands
+        public static string mt_tx_activate = "env_aenvm\t";              //activate monitoring thread
+        public static string mt_tx_deactivate = "env_deaenvm\t";          //deactivate monitoring thread
+        public static string mt_tx_rstatus = "env_rstatus\t";             //read monitoring status
+
+        //Serial RX commands 
+        public static string mt_rx_status = "env_status";
+        public static string mt_rx_temp_data = "env_temp";
+        public static string mt_rx_pres_data = "env_pres";
+
+
+    }
+
+
 }

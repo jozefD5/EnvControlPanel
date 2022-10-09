@@ -110,7 +110,6 @@ namespace EnvControlPanel.Models
                 if (!IsOpen)
                 {
                     serialPort.Open();
-                    serialPort.DataReceived += new SerialDataReceivedEventHandler(DataReceivedHandler);
                 }
 
                 CheckConnect();
@@ -152,9 +151,6 @@ namespace EnvControlPanel.Models
 
 
 
-
-
-
         private void DataProcess(string rxData)
         {
             string str = new string((from c in rxData
@@ -164,23 +160,5 @@ namespace EnvControlPanel.Models
         }
 
      
-
-
-        private void DataReceivedHandler(object sender, SerialDataReceivedEventArgs e)
-        {
-            SerialPort sp = (SerialPort)sender;
-            string dataStream = sp.ReadLine();
-
-            if (dataStream.Contains(EnvDevice.mt_rx_temp_data))
-            {
-                
-
-                
-
-                //Debug.WriteLine($"Temp: {str}");
-            }
-        }
-
-
     }
 }

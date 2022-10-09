@@ -56,14 +56,18 @@ namespace EnvControlPanel.ViewModels
           
         public DataViewModel()
         {
-            //Settings
+            //Initial settings
             MaxTemp = 140;
             MinTemp = -50;
-
             MaxPressure = 120;
             MiniPressure = -20;
-
             collectionSizeLimit = 50;
+            deviceStatus = false;
+
+
+            //Add event handler for incomming new data
+            EnvDevice.dataFlow.NewEnvData += NewDataProcess;
+
 
             //Setup
             temperatureData = new ObservableCollection<double> {0.0};
@@ -74,12 +78,8 @@ namespace EnvControlPanel.ViewModels
             lastPressure = pressureData.LastOrDefault();
             lastPressureStr = lastPressure.ToString() + " psi";
 
-            
-            //Set initial device status
-            deviceStatus = false;
 
-
-            //Setup temperature graph
+            //Setup temperature and presure graphs
             SeriesTemperature = new ObservableCollection<ISeries>
             {
                 new LineSeries<double>
@@ -93,8 +93,6 @@ namespace EnvControlPanel.ViewModels
                     TooltipLabelFormatter = (charPoin) => $"{charPoin.Context.Series.Name}: {charPoin.PrimaryValue}"
                 }
             };
-
-            //Setup pressure graph
             SeriesPressure = new ObservableCollection<ISeries>
             {
                 new LineSeries<double>
@@ -110,10 +108,10 @@ namespace EnvControlPanel.ViewModels
             };
 
 
+            //Add commands for UI components
             AddTempCommand = new RelayCommand(AddTemp);
             SetDeviceStateCommand = new RelayCommand(SetDeviceState);
             ReadDeviceStatusCommand = new RelayCommand(ReadDeviceStatus);
-
         }
 
 
@@ -121,7 +119,7 @@ namespace EnvControlPanel.ViewModels
 
 
         //Temperature data control section
-
+        //Collection containing record of received temperature data
         public ObservableCollection<double> TemperatureData
         {
             get => temperatureData;
@@ -155,7 +153,7 @@ namespace EnvControlPanel.ViewModels
 
 
         //Pressure data control section
-
+        //Collection containing record of received pressure data
         public ObservableCollection<double> PressureData
         {
             get => pressureData;
@@ -253,11 +251,11 @@ namespace EnvControlPanel.ViewModels
         {
             if (deviceStatus)
             {
-                EnvDevice.Device.SerialWrite(EnvDevice.mt_tx_activate);
+                EnvDevice.Device.SerialWrite(EnvCommand.mt_tx_activate);
             }
             else
             {
-                EnvDevice.Device.SerialWrite(EnvDevice.mt_tx_deactivate);
+                EnvDevice.Device.SerialWrite(EnvCommand.mt_tx_deactivate);
             }
         }
 
@@ -265,9 +263,36 @@ namespace EnvControlPanel.ViewModels
         //Send command to read device monitoring status
         public void ReadDeviceStatus()
         {
-            EnvDevice.Device.SerialWrite(EnvDevice.mt_tx_rstatus);
+            EnvDevice.Device.SerialWrite(EnvCommand.mt_tx_rstatus);
         }
 
+
+
+        private void NewDataProcess(object sender, NewEnvDataEventArgs eventArgs)
+        {
+            //Debug.WriteLine($"New Data: {eventArgs.SerialDataStr}");
+
+            string str = eventArgs.SerialDataStr;
+
+            switch (str)
+            {
+                case string a when str.Contains(EnvCommand.mt_rx_status):
+                    Debug.WriteLine($"Data: {a}");
+                    break;
+
+
+
+
+                default:
+                    Debug.WriteLine("Unsupported Command!!!");
+                    break;
+
+            }
+
+
+
+
+        }
 
     }
 }
