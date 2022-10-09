@@ -148,17 +148,6 @@ namespace EnvControlPanel.Models
             StopBit = StopBits.One;
         }
 
-
-
-
-        private void DataProcess(string rxData)
-        {
-            string str = new string((from c in rxData
-                                     where char.IsDigit(c) || c == '.'
-                                     select c).ToArray());
-
-        }
-
      
     }
 }

@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using System.Xml.Linq;
 using ABI.Windows.UI;
 using EnvControlPanel.Models;
 using LiveChartsCore;
@@ -231,7 +232,7 @@ namespace EnvControlPanel.ViewModels
 
 
         //General control section
-       
+        //Send command to read device monitoring status
         public bool DeviceStatus
         {
             get => deviceStatus;
@@ -242,8 +243,6 @@ namespace EnvControlPanel.ViewModels
                 SetDeviceState();
             }
         }
-
-
 
 
         //Send activate/deactivate monitoring command and request monitoring status
@@ -280,6 +279,13 @@ namespace EnvControlPanel.ViewModels
                     Debug.WriteLine($"Data: {a}");
                     break;
 
+                case string a when str.Contains(EnvCommand.mt_rx_temp_data):
+                    SeperateReadings(EnvCommand.mt_rx_temp_data, ref a);
+                    break;
+
+                case string a when str.Contains(EnvCommand.mt_rx_pres_data):
+                    SeperateReadings(EnvCommand.mt_rx_pres_data, ref a);
+                    break;
 
 
 
@@ -293,6 +299,38 @@ namespace EnvControlPanel.ViewModels
 
 
         }
+
+
+
+        //Seperate temperature or pressure readings and add data to collection and display lates data
+        private void SeperateReadings(string select,ref string rxData)
+        {
+            string str = new string((from c in rxData
+                                     where char.IsDigit(c) || c == '.'
+                                     select c).ToArray());
+
+            double val = double.Parse(str, System.Globalization.CultureInfo.InvariantCulture);
+
+
+            if (select == EnvCommand.mt_rx_temp_data)
+            {
+                Debug.WriteLine($"Temp: {val}");
+
+                TemperatureData.Add(val);
+                LastTemp = val;
+                LimitCollectionSize(TemperatureData);
+            } 
+            else if (select == EnvCommand.mt_rx_pres_data)
+            {
+                Debug.WriteLine($"Pres: {val}");
+                PressureData.Add(val);
+                LimitCollectionSize(TemperatureData);
+            }
+
+            //UpdateReadings();
+        }
+
+
 
     }
 }
