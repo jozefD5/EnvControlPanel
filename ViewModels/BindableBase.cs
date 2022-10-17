@@ -5,8 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
-
-
+using System.Diagnostics;
 
 namespace EnvControlPanel.ViewModels
 {
@@ -16,7 +15,15 @@ namespace EnvControlPanel.ViewModels
 
         protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            try
+            {
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            }
+            catch(Exception ex)
+            {
+                Debug.WriteLine($"On Proprty Change Error: {ex}");
+            }
+            
         }
 
 

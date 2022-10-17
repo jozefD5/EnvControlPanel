@@ -81,9 +81,9 @@
                        Margin="0,0,0,10"/>
 
             <Grid>
-                <!--<TextBlock Text="{x:Bind ViewModelData.LastTempStr, Mode=OneWay}"
+                <TextBlock Text="{x:Bind ViewModelData.LastTemp, Mode=OneWay}"
                            HorizontalAlignment="Center"
-                           VerticalAlignment="Center"/>-->
+                           VerticalAlignment="Center"/>
 
                 <ProgressRing Width="280" Height="280" 
                               Maximum="{x:Bind ViewModelData.MaxTemp}"
@@ -104,7 +104,7 @@
                        Margin="0,0,0,4"/>
 
             <Grid>
-                <TextBlock Text="{x:Bind ViewModelData.LastPressureStr, Mode=OneWay}"
+                <TextBlock Text="{x:Bind ViewModelData.LastPressure, Mode=OneWay}"
                        HorizontalAlignment="Center"
                        VerticalAlignment="Center"/>
                 <ProgressRing Width="280" Height="280" 

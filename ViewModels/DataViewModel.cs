@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.IO.Ports;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,30 +10,30 @@ using System.Windows.Input;
 using System.Xml.Linq;
 using ABI.Windows.UI;
 using EnvControlPanel.Models;
+using EnvControlPanel.Views;
 using LiveChartsCore;
 using LiveChartsCore.Defaults;
 using LiveChartsCore.Kernel;
 using LiveChartsCore.SkiaSharpView;
 using LiveChartsCore.SkiaSharpView.Painting;
 using LiveChartsCore.SkiaSharpView.WinUI;
+using Microsoft.UI.Dispatching;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Media;
 using SkiaSharp;
 using Windows.Foundation.Collections;
+using Windows.UI.Core;
 
 namespace EnvControlPanel.ViewModels
 {
     public class DataViewModel : BindableBase
     {
+        private readonly DispatcherQueue _dispatcherQueue = DispatcherQueue.GetForCurrentThread();
 
         private ObservableCollection<double> temperatureData;
         private ObservableCollection<double> pressureData;
-
-
         private double lastTemperature;
-        private string lastTemperatureStr;
-
         private double lastPressure;
-        private string lastPressureStr;
 
         public double MaxTemp { get; set; }
         public double MinTemp { get; set; }
@@ -65,19 +66,15 @@ namespace EnvControlPanel.ViewModels
             collectionSizeLimit = 50;
             deviceStatus = false;
 
-
             //Add event handler for incomming new data
             EnvDevice.dataFlow.NewEnvData += NewDataProcess;
-
 
             //Setup
             temperatureData = new ObservableCollection<double> {0.0};
             lastTemperature = temperatureData.LastOrDefault();
-            lastTemperatureStr = lastTemperature.ToString() + " °C";
 
             pressureData = new ObservableCollection<double> {0.0};
             lastPressure = pressureData.LastOrDefault();
-            lastPressureStr = lastPressure.ToString() + " psi";
 
 
             //Setup temperature and presure graphs
@@ -119,7 +116,6 @@ namespace EnvControlPanel.ViewModels
 
 
 
-        //Temperature data control section
         //Collection containing record of received temperature data
         public ObservableCollection<double> TemperatureData
         {
@@ -131,7 +127,8 @@ namespace EnvControlPanel.ViewModels
             }
         }
 
-        public double LastTemp
+        //Last/newest temperature value in collection
+        public double LastTemperature
         {
             get => lastTemperature;
 
@@ -141,19 +138,8 @@ namespace EnvControlPanel.ViewModels
             }
         }
 
-        public string LastTempStr
-        {
-            get => lastTemperatureStr;
-
-            set
-            {
-                SetProperty(ref lastTemperatureStr, value);
-            }
-        }
 
 
-
-        //Pressure data control section
         //Collection containing record of received pressure data
         public ObservableCollection<double> PressureData
         {
@@ -165,6 +151,7 @@ namespace EnvControlPanel.ViewModels
             }
         }
 
+        //Last/newest pressure value in collection
         public double LastPressure
         {
             get => lastPressure;
@@ -175,35 +162,13 @@ namespace EnvControlPanel.ViewModels
             }
         }
 
-        public string LastPressureStr
-        {
-            get => lastPressureStr;
-
-            set
-            {
-                SetProperty(ref lastPressureStr, value);
-            }
-        }
 
 
 
-        private void UpdateReadings()
-        {
-            LastTemp = temperatureData.LastOrDefault();
-            LastTempStr = lastTemperature.ToString() + " °C";
-
-            LastPressure = pressureData.LastOrDefault();
-            LastPressureStr = lastPressure.ToString() + " psi";
-        }
-
+        //Keep collection size withinthe limit by removing  required ammount of elements
         private void LimitCollectionSize(ObservableCollection<double> collection)
         {
-            int size = collection.Count();
-
-            Debug.WriteLine($"Size: {size}");
-
-            //Remove first two elements
-            if(size >= collectionSizeLimit)
+            if(collection.Count() >= collectionSizeLimit)
             {
                 for(int i=0; i< (collectionSizeLimit/2); i++)
                 {
@@ -211,6 +176,18 @@ namespace EnvControlPanel.ViewModels
                 }
             }
         }
+
+
+        //Update UI graph components
+        private void UpdateGraph()
+        {
+            LastTemperature = temperatureData.LastOrDefault();
+            LastPressure = pressureData.LastOrDefault();
+
+            LimitCollectionSize(TemperatureData);
+            LimitCollectionSize(PressureData);
+        }
+
 
         public void AddTemp()
         {
@@ -222,17 +199,16 @@ namespace EnvControlPanel.ViewModels
             TemperatureData.Add(temp1);
             PressureData.Add(temp2);
 
+            LastTemperature = temperatureData.LastOrDefault();
+            LastPressure = pressureData.LastOrDefault();
+
             LimitCollectionSize(TemperatureData);
             LimitCollectionSize(PressureData);
-
-            UpdateReadings();
         }
 
 
 
-
-        //General control section
-        //Send command to read device monitoring status
+        //Device monitoring status
         public bool DeviceStatus
         {
             get => deviceStatus;
@@ -242,6 +218,13 @@ namespace EnvControlPanel.ViewModels
                 SetProperty(ref deviceStatus, value);
                 SetDeviceState();
             }
+        }
+
+
+        //Send command to read device monitoring status
+        public void ReadDeviceStatus()
+        {
+            EnvDevice.Device.SerialWrite(EnvCommand.mt_tx_rstatus);
         }
 
 
@@ -259,18 +242,9 @@ namespace EnvControlPanel.ViewModels
         }
 
 
-        //Send command to read device monitoring status
-        public void ReadDeviceStatus()
-        {
-            EnvDevice.Device.SerialWrite(EnvCommand.mt_tx_rstatus);
-        }
-
-
-
+        //Process new UART data on rx event
         private void NewDataProcess(object sender, NewEnvDataEventArgs eventArgs)
         {
-            //Debug.WriteLine($"New Data: {eventArgs.SerialDataStr}");
-
             string str = eventArgs.SerialDataStr;
 
             switch (str)
@@ -280,30 +254,23 @@ namespace EnvControlPanel.ViewModels
                     break;
 
                 case string a when str.Contains(EnvCommand.mt_rx_temp_data):
-                    SeperateReadings(EnvCommand.mt_rx_temp_data, ref a);
+                    SeperateReadings(EnvCommand.mt_rx_temp_data,  a);
                     break;
 
                 case string a when str.Contains(EnvCommand.mt_rx_pres_data):
-                    SeperateReadings(EnvCommand.mt_rx_pres_data, ref a);
+                    SeperateReadings(EnvCommand.mt_rx_pres_data,  a);
                     break;
-
-
 
                 default:
                     Debug.WriteLine("Unsupported Command!!!");
                     break;
-
             }
-
-
-
-
         }
 
 
 
         //Seperate temperature or pressure readings and add data to collection and display lates data
-        private void SeperateReadings(string select,ref string rxData)
+        private void SeperateReadings(string select, string rxData)
         {
             string str = new string((from c in rxData
                                      where char.IsDigit(c) || c == '.'
@@ -312,22 +279,23 @@ namespace EnvControlPanel.ViewModels
             double val = double.Parse(str, System.Globalization.CultureInfo.InvariantCulture);
 
 
-            if (select == EnvCommand.mt_rx_temp_data)
+            //update UI components
+            Task.Run(() =>
             {
-                Debug.WriteLine($"Temp: {val}");
-
-                TemperatureData.Add(val);
-                LastTemp = val;
-                LimitCollectionSize(TemperatureData);
-            } 
-            else if (select == EnvCommand.mt_rx_pres_data)
-            {
-                Debug.WriteLine($"Pres: {val}");
-                PressureData.Add(val);
-                LimitCollectionSize(TemperatureData);
-            }
-
-            //UpdateReadings();
+                _ = _dispatcherQueue.TryEnqueue(() =>
+                {
+                    if (select == EnvCommand.mt_rx_temp_data)
+                    {
+                        TemperatureData.Add(val);
+                        UpdateGraph();
+                    }
+                    else if (select == EnvCommand.mt_rx_pres_data)
+                    {
+                        PressureData.Add(val);
+                        UpdateGraph();
+                    }
+                });
+            });
         }
 
 
