@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace EnvControlPanel.Enums
 {
+    //Enum to determine active view tag
     public enum ViewTagType
     {
         HomeView,
@@ -14,6 +15,7 @@ namespace EnvControlPanel.Enums
     }
 
 
+    //Serial COM port device statuss
     public enum ComStatus
     {
         connect, 

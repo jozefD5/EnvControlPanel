@@ -53,8 +53,6 @@ namespace EnvControlPanel.ViewModels
         public ObservableCollection<ISeries> SeriesPressure { get; set; }
 
 
-        
-
           
         public DataViewModel()
         {
@@ -111,8 +109,6 @@ namespace EnvControlPanel.ViewModels
             SetDeviceStateCommand = new RelayCommand(SetDeviceState);
             ReadDeviceStatusCommand = new RelayCommand(ReadDeviceStatus);
         }
-
-
 
 
 

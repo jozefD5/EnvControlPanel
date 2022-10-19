@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 
 namespace EnvControlPanel.Models
 {
+    //Static class used to hold serial COM device selected in home view. this is used across views to refere to single COM device
     public static class EnvDevice
     {
         //Selected/Active serial devices
@@ -24,7 +25,7 @@ namespace EnvControlPanel.Models
 
 
 
-        //Open serial com port and assign received data handler
+        //Open serial COM port and assign received data handler
         public static void OpenComs()
         {
             if (Device.Open())
@@ -34,14 +35,14 @@ namespace EnvControlPanel.Models
         }
 
 
-        //Output if com port is open
+        //Output COM port open status
         public static bool IsOpen
         {
             get => Device.IsOpen;
         }
 
 
-        //UART received data handler, triggers new data event
+        //Serial data receive handler, triggers new data event
         private static void DataReceivedHandler(object sender, SerialDataReceivedEventArgs e)
         {
             SerialPort sp = (SerialPort)sender;
@@ -67,7 +68,6 @@ namespace EnvControlPanel.Models
         public static string mt_rx_status = "env_status";
         public static string mt_rx_temp_data = "env_temp";
         public static string mt_rx_pres_data = "env_pres";
-
 
     }
 

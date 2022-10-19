@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace EnvControlPanel.Models
 {
+    //Data flow class handels, triggers, events when new data are reacived via active serial COM port
     public class DataFlow
     {
- 
         public event EventHandler<NewEnvDataEventArgs> NewEnvData;
 
         public void OnNewEnvData(string serialDataStr)
@@ -20,7 +20,7 @@ namespace EnvControlPanel.Models
 
 
 
-
+    //New enviroment data, a string argument to handle incomming commands or data via serial port
     public class NewEnvDataEventArgs
     {
         public NewEnvDataEventArgs(string serialDataStr)

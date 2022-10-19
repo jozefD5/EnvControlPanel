@@ -58,7 +58,7 @@ namespace EnvControlPanel.ViewModels
 
 
 
-
+        //Collection containing all detected/available serial COm devices
         public ObservableCollection<SerialComDevice> SerialItems
         {
             get => serialItems;
@@ -75,7 +75,7 @@ namespace EnvControlPanel.ViewModels
 
             set
             {
-                //only enable connect if selected device is not empty com port
+                //only enable connect if selected device is not empty COM port
                 SetProperty(ref selectIndex, value);
 
                 if (value > 0)
@@ -128,15 +128,15 @@ namespace EnvControlPanel.ViewModels
             }
         }
 
+
+        //Close all available COM ports and clear all items and then add empty com port
         public void ClearSerialItems()
-        {
-            //Close all ports
+        {    
             foreach (SerialComDevice device in serialItems)
             {
                 device.Close();
             }
 
-            //Clear all items and then add empty com port
             serialItems.Clear();
             serialItems.Add(EmptyComPort);
         }
