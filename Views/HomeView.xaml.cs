@@ -31,7 +31,7 @@ namespace EnvControlPanel.Views
             this.InitializeComponent();
         }
 
-        public MainViewModel ViewModelMain => App.ViewModelMain;
+        public HomeViewModel ViewModelHome => App.ViewModelHome;
 
       
     }

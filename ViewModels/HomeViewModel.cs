@@ -1,26 +1,27 @@
-﻿using System;
+﻿using EnvControlPanel.Models;
+using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Diagnostics;
+using System.IO.Ports;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
-using System.Collections.ObjectModel;
 using System.Windows.Input;
-using EnvControlPanel.Models;
+
+
 using EnvControlPanel.Enums;
-using System.Diagnostics;
-using System.IO.Ports;
 using Windows.ApplicationModel.Appointments.AppointmentsProvider;
 
 namespace EnvControlPanel.ViewModels
 {
-    public class MainViewModel : BindableBase
+    public class HomeViewModel : BindableBase
     {
 
         private ObservableCollection<SerialComDevice> serialItems;
 
         private readonly SerialComDevice EmptyComPort;
-        
+
         private int selectIndex;
 
         private int oldIndex;
@@ -29,14 +30,14 @@ namespace EnvControlPanel.ViewModels
         private bool enableDisconnect;
 
 
-        public ICommand RefreshCommand { get; set;}
-        public ICommand ConnectCommand { get; set;}
-        public ICommand DisconnectCommand { get; set;}
+        public ICommand RefreshCommand { get; set; }
+        public ICommand ConnectCommand { get; set; }
+        public ICommand DisconnectCommand { get; set; }
 
 
 
 
-        public MainViewModel()
+        public HomeViewModel()
         {
             //Add empty com port to device list
             EmptyComPort = new SerialComDevice("Empty COM Port");
@@ -53,7 +54,6 @@ namespace EnvControlPanel.ViewModels
 
             //Get list of all connected devices
             RefreshDeviceList();
-
         }
 
 
@@ -61,7 +61,7 @@ namespace EnvControlPanel.ViewModels
 
         public ObservableCollection<SerialComDevice> SerialItems
         {
-            get  => serialItems; 
+            get => serialItems;
 
             set
             {
@@ -78,7 +78,7 @@ namespace EnvControlPanel.ViewModels
                 //only enable connect if selected device is not empty com port
                 SetProperty(ref selectIndex, value);
 
-                if(value > 0)
+                if (value > 0)
                 {
                     SetProperty(ref EnvDevice.Device, serialItems[value]);
 
@@ -140,13 +140,13 @@ namespace EnvControlPanel.ViewModels
             serialItems.Clear();
             serialItems.Add(EmptyComPort);
         }
-         
+
 
         //Connecte to selected device
         public void ConnectToDevice()
         {
             //Close old selected-port/device before opening new selected port
-            if((oldIndex != selectIndex) && (oldIndex > 0))
+            if ((oldIndex != selectIndex) && (oldIndex > 0))
             {
                 serialItems[oldIndex].Close();
             }
@@ -171,7 +171,7 @@ namespace EnvControlPanel.ViewModels
                 EnableDisconnect = EnvDevice.IsOpen;
 
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Debug.WriteLine("Acrtion: DisconnectDevice()     Exception");
                 Debug.WriteLine(ex.Message);
@@ -181,6 +181,4 @@ namespace EnvControlPanel.ViewModels
 
 
     }
-
-
 }
