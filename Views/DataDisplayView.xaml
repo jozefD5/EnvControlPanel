@@ -37,22 +37,43 @@
             <Button Content="TempButton"
                     Command="{x:Bind ViewModelData.AddTempCommand}"/>
 
-
-            <TextBlock Text="Monitoring"
-                       Style="{StaticResource SubtitleTextBlockStyle}"/>
-
-            <ToggleSwitch IsOn="{x:Bind ViewModelData.DeviceStatus, Mode=TwoWay}"/>
-
             <Button Content="Read Device Status"
                     HorizontalAlignment="Stretch"
                     Command="{x:Bind ViewModelData.ReadDeviceStatusCommand}"/>
+
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Monitoring:"
+                           Style="{StaticResource SubtitleTextBlockStyle}"
+                           Margin="0,0,10,0"/>
+
+                <ToggleSwitch IsOn="{x:Bind ViewModelData.DeviceStatus, Mode=TwoWay}"/>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Temperature:"
+                           Style="{StaticResource SubtitleTextBlockStyle}"
+                           Margin="0,0,10,0"/>
+
+                <ToggleSwitch IsOn="{x:Bind ViewModelData.TemoperatureMonitoring, Mode=TwoWay}"/>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Pressure:"
+                           Style="{StaticResource SubtitleTextBlockStyle}"
+                           Margin="0,0,10,0"/>
+
+                <ToggleSwitch IsOn="{x:Bind ViewModelData.PressureMonitoring, Mode=TwoWay}"/>
+            </StackPanel>
+
+
+
 
 
 
 
             <TextBlock Text="Mode"
                        Style="{StaticResource SubtitleTextBlockStyle}"
-                       Margin="0,40,0,10"/>
+                       Margin="0,40,0,0"/>
 
             <Button Content="Slow"
                     HorizontalAlignment="Stretch"

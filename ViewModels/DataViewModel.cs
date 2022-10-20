@@ -41,8 +41,10 @@ namespace EnvControlPanel.ViewModels
         public double MaxPressure { get; set; }
         public double MiniPressure { get; set; }
 
-        private int collectionSizeLimit;
+        private int  collectionSizeLimit;
         private bool deviceStatus;
+        private bool temoperatureMonitoring;
+        private bool pressureMonitoring;
 
 
         public ICommand AddTempCommand { get; set; }
@@ -204,7 +206,7 @@ namespace EnvControlPanel.ViewModels
 
 
 
-        //Device monitoring status
+        //Device monitoring status, activates/deactivate monitoring
         public bool DeviceStatus
         {
             get => deviceStatus;
@@ -216,26 +218,78 @@ namespace EnvControlPanel.ViewModels
             }
         }
 
-
-        //Send command to read device monitoring status
-        public void ReadDeviceStatus()
+        //Activate/deactivate temperature monitoring 
+        public bool TemoperatureMonitoring
         {
-            EnvDevice.Device.SerialWrite(EnvCommand.mt_tx_rstatus);
+            get => temoperatureMonitoring;
+
+            set
+            {
+                SetProperty(ref temoperatureMonitoring, value);
+                SetTemperatureMonitoring();
+            }
+        }
+
+        //Activate/deactivate pressure monitoring 
+        public bool PressureMonitoring
+        {
+            get => pressureMonitoring;
+
+            set
+            {
+                SetProperty(ref pressureMonitoring, value);
+                SetPressureMonitoring();
+            }
         }
 
 
-        //Send activate/deactivate monitoring command and request monitoring status
+
+
+
+        public void ReadDeviceStatus()
+        {
+            EnvDevice.Device.SerialWrite(SerialCommands.env_sc_rstatus);
+        }
+
         public void SetDeviceState()
         {
             if (deviceStatus)
             {
-                EnvDevice.Device.SerialWrite(EnvCommand.mt_tx_activate);
+                EnvDevice.Device.SerialWrite(SerialCommands.env_sc_activate);
             }
             else
             {
-                EnvDevice.Device.SerialWrite(EnvCommand.mt_tx_deactivate);
+                EnvDevice.Device.SerialWrite(SerialCommands.env_sc_deactivate);
             }
         }
+
+        public void SetTemperatureMonitoring()
+        {
+            if (temoperatureMonitoring)
+            {
+                EnvDevice.Device.SerialWrite(SerialCommands.env_sc_temp_activate);
+            }
+            else
+            {
+                EnvDevice.Device.SerialWrite(SerialCommands.env_sc_temp_deactivate);
+            }
+        }
+
+        public void SetPressureMonitoring()
+        {
+            if (pressureMonitoring)
+            {
+                EnvDevice.Device.SerialWrite(SerialCommands.env_sc_pres_activate);
+            }
+            else
+            {
+                EnvDevice.Device.SerialWrite(SerialCommands.env_sc_pres_deactivate);
+            }
+        }
+
+
+
+
 
 
         //Process new UART data on rx event
@@ -245,20 +299,20 @@ namespace EnvControlPanel.ViewModels
 
             switch (str)
             {
-                case string a when str.Contains(EnvCommand.mt_rx_status):
+                case string a when str.Contains(SerialCommands.env_sc_status):
                     Debug.WriteLine($"Data: {a}");
                     break;
 
-                case string a when str.Contains(EnvCommand.mt_rx_temp_data):
-                    SeperateReadings(EnvCommand.mt_rx_temp_data,  a);
+                case string a when str.Contains(SerialCommands.env_sc_temp_data):
+                    SeperateReadings(SerialCommands.env_sc_temp_data,  a);
                     break;
 
-                case string a when str.Contains(EnvCommand.mt_rx_pres_data):
-                    SeperateReadings(EnvCommand.mt_rx_pres_data,  a);
+                case string a when str.Contains(SerialCommands.env_sc_pres_data):
+                    SeperateReadings(SerialCommands.env_sc_pres_data,  a);
                     break;
 
                 default:
-                    Debug.WriteLine("Unsupported Command!!!");
+                    Debug.WriteLine($"Unsupported Command!: {str}");
                     break;
             }
         }
@@ -280,12 +334,12 @@ namespace EnvControlPanel.ViewModels
             {
                 _ = _dispatcherQueue.TryEnqueue(() =>
                 {
-                    if (select == EnvCommand.mt_rx_temp_data)
+                    if (select == SerialCommands.env_sc_temp_data)
                     {
                         TemperatureData.Add(val);
                         UpdateGraph();
                     }
-                    else if (select == EnvCommand.mt_rx_pres_data)
+                    else if (select == SerialCommands.env_sc_pres_data)
                     {
                         PressureData.Add(val);
                         UpdateGraph();
