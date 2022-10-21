@@ -47,9 +47,11 @@ namespace EnvControlPanel.ViewModels
         private bool pressureMonitoring;
 
 
-        public ICommand AddTempCommand { get; set; }
         public ICommand SetDeviceStateCommand { get; set; }
         public ICommand ReadDeviceStatusCommand { get; set; }
+        public ICommand ReportModeNormalCommand { get; set; }
+        public ICommand ReportModeSlowCommand { get; set; }
+        public ICommand ReportModeFastCommand { get; set; }
 
         public ObservableCollection<ISeries> SeriesTemperature { get; set; }
         public ObservableCollection<ISeries> SeriesPressure { get; set; }
@@ -107,9 +109,11 @@ namespace EnvControlPanel.ViewModels
 
 
             //Add commands for UI components
-            AddTempCommand = new RelayCommand(AddTemp);
             SetDeviceStateCommand = new RelayCommand(SetDeviceState);
             ReadDeviceStatusCommand = new RelayCommand(ReadDeviceStatus);
+            ReportModeNormalCommand = new RelayCommand(SetReportModeToNormal);
+            ReportModeSlowCommand = new RelayCommand(SetReportModeToSlow);
+            ReportModeFastCommand = new RelayCommand(SetReportModeToFast);
         }
 
 
@@ -246,12 +250,12 @@ namespace EnvControlPanel.ViewModels
 
 
 
-        public void ReadDeviceStatus()
+        private void ReadDeviceStatus()
         {
             EnvDevice.Device.SerialWrite(SerialCommands.env_sc_rstatus);
         }
 
-        public void SetDeviceState()
+        private void SetDeviceState()
         {
             if (deviceStatus)
             {
@@ -263,7 +267,7 @@ namespace EnvControlPanel.ViewModels
             }
         }
 
-        public void SetTemperatureMonitoring()
+        private void SetTemperatureMonitoring()
         {
             if (temoperatureMonitoring)
             {
@@ -275,7 +279,7 @@ namespace EnvControlPanel.ViewModels
             }
         }
 
-        public void SetPressureMonitoring()
+        private void SetPressureMonitoring()
         {
             if (pressureMonitoring)
             {
@@ -287,7 +291,20 @@ namespace EnvControlPanel.ViewModels
             }
         }
 
+        private void SetReportModeToNormal()
+        {
+            EnvDevice.Device.SerialWrite(SerialCommands.env_sc_rim_normal);
+        }
 
+        private void SetReportModeToSlow()
+        {
+            EnvDevice.Device.SerialWrite(SerialCommands.env_sc_rim_slow);
+        }
+
+        private void SetReportModeToFast()
+        {
+            EnvDevice.Device.SerialWrite(SerialCommands.env_sc_rim_fast);
+        }
 
 
 

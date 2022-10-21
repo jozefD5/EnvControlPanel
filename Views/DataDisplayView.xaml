@@ -93,24 +93,20 @@
             <Button Grid.Row="5" 
                     Content="Slow"
                     HorizontalAlignment="Stretch"
+                    Command="{x:Bind ViewModelData.ReportModeSlowCommand}"
                     Margin="0,0,0,10"/>
 
             <Button Grid.Row="6" 
                     Content="Normal"
                     HorizontalAlignment="Stretch"
+                    Command="{x:Bind ViewModelData.ReportModeNormalCommand}"
                     Margin="0,0,0,10"/>
 
             <Button Grid.Row="7" 
                     Content="Fast"
                     HorizontalAlignment="Stretch"
+                    Command="{x:Bind ViewModelData.ReportModeFastCommand}"
                     Margin="0,0,0,10"/>
-
-
-
-
-
-
-
         </Grid>
 
 
