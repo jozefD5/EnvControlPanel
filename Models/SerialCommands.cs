@@ -17,6 +17,9 @@ namespace EnvControlPanel.Models
         public static string env_sc_temp_deactivate = "env_temp_dact\t";   //deactivate temperature monitoring
         public static string env_sc_pres_activate = "env_pres_act\t";      //activate temperature monitoring
         public static string env_sc_pres_deactivate = "env_pres_dact\t";   //deactivate temperature monitoring
+        public static string env_sc_rim_normal = "env_rimnorm\t";          //normal report interval mode
+        public static string env_sc_rim_slow = "env_rimslow\t";            //normal report interval mode
+        public static string env_sc_rim_fast = "env_rimfast\t";            //normal report interval mode
 
 
 
