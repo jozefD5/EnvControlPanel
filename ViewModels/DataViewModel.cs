@@ -63,8 +63,8 @@ namespace EnvControlPanel.ViewModels
             //Initial settings
             MaxTemp = 140;
             MinTemp = -50;
-            MaxPressure = 120;
-            MiniPressure = -20;
+            MaxPressure = 1200;
+            MiniPressure = 0;
             collectionSizeLimit = 50;
             deviceStatus = false;
 
@@ -359,6 +359,7 @@ namespace EnvControlPanel.ViewModels
                     else if (select == SerialCommands.env_sc_pres_data)
                     {
                         PressureData.Add(val);
+                        Debug.WriteLine($"P: {val}");
                         UpdateGraph();
                     }
                 });
