@@ -184,7 +184,7 @@
                        HorizontalAlignment="Center"
                        VerticalAlignment="Center"/>
 
-                <TextBlock Text="PSI"
+                <TextBlock Text="hPa"
                            Margin="0,30,0,0"
                            HorizontalAlignment="Center"
                            VerticalAlignment="Center"/>
