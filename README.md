@@ -16,6 +16,7 @@ Includes interface to connect and operate device, select temperature and pressur
 
 
 
+![HomeView](\readmeimg\homeview.png)
 
-
+![DataView](\readmeimg\dataview.png)
 
