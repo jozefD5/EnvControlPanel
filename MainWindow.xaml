@@ -23,10 +23,6 @@
                                     Content="DataDisplay"
                                     Tag="DataDisplyViewNv"/>
 
-                <NavigationViewItem Icon="Setting"
-                                    Content="Settings"
-                                    Tag="SettingsViewNv"/>
-
             </NavigationView.MenuItems>
 
 

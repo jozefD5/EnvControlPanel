@@ -19,7 +19,7 @@
         </Grid.RowDefinitions>
 
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="220"/>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
@@ -30,19 +30,117 @@
                    Margin="10"/>
 
 
-        <StackPanel Grid.Row="1"
+
+        <Grid Grid.Row="1"
+              Grid.Column="0">
+            
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            
+            <TextBlock Text="Control"
+                       Style="{StaticResource TitleTextBlockStyle}"
+                       Margin="0,0,0,10"/>
+
+            <TextBlock Grid.Row="1"
+                       Text="Monitoring:"
+                       Style="{StaticResource BaseTextBlockStyle}"
+                       VerticalAlignment="Center"
+                       Margin="0,0,10,0"/>
+            <ToggleSwitch Grid.Row="1"
+                          Grid.Column="1"
+                          IsOn="{x:Bind ViewModelData.DeviceStatus, Mode=TwoWay}"/>
+
+            <TextBlock Grid.Row="2" 
+                       Text="Temperature:"
+                       Style="{StaticResource NavigationViewItemHeaderTextStyle}"
+                       VerticalAlignment="Center"
+                       Margin="0,0,10,0"/>
+            <ToggleSwitch Grid.Row="2" 
+                          Grid.Column="1"
+                          IsOn="{x:Bind ViewModelData.TemoperatureMonitoring, Mode=TwoWay}"/>
+
+            <TextBlock Grid.Row="3" 
+                       Text="Pressure:"
+                       Style="{StaticResource NavigationViewItemHeaderTextStyle}"
+                       VerticalAlignment="Center"
+                       Margin="0,0,10,0"/>
+            <ToggleSwitch Grid.Row="3" 
+                          Grid.Column="1"
+                          IsOn="{x:Bind ViewModelData.PressureMonitoring, Mode=TwoWay}"/>
+
+
+
+            
+            <TextBlock Grid.Row="4"
+                       Text="Report Mode"
+                       Style="{StaticResource TitleTextBlockStyle}"
+                       Margin="0,20,10,0"/>
+
+            <Button Grid.Row="5" 
+                    Content="Slow"
+                    HorizontalAlignment="Stretch"
+                    Command="{x:Bind ViewModelData.ReportModeSlowCommand}"
+                    Margin="0,0,0,10"/>
+
+            <Button Grid.Row="6" 
+                    Content="Normal"
+                    HorizontalAlignment="Stretch"
+                    Command="{x:Bind ViewModelData.ReportModeNormalCommand}"
+                    Margin="0,0,0,10"/>
+
+            <Button Grid.Row="7" 
+                    Content="Fast"
+                    HorizontalAlignment="Stretch"
+                    Command="{x:Bind ViewModelData.ReportModeFastCommand}"
+                    Margin="0,0,0,10"/>
+        </Grid>
+
+
+
+        <!--<StackPanel Grid.Row="1"
                     Grid.Column="0"
-                    Margin="4,20,0,0">
+                    Margin="4,20,10,0">
 
             <Button Content="TempButton"
                     Command="{x:Bind ViewModelData.AddTempCommand}"/>
 
-            <ToggleSwitch Margin="0,10,0,0"/>
+            <Button Content="Read Device Status"
+                    HorizontalAlignment="Left"
+                    Command="{x:Bind ViewModelData.ReadDeviceStatusCommand}"/>
 
-        </StackPanel>
 
-        
-        
+
+            
+
+            <Button Content="Slow"
+                    HorizontalAlignment="Stretch"
+                    Margin="0,0,0,10"/>
+            
+            <Button Content="Normal"
+                    HorizontalAlignment="Stretch"
+                    Margin="0,0,0,10"/>
+
+            <Button Content="Fast"
+                    HorizontalAlignment="Stretch"
+                    Margin="0,0,0,10"/>
+
+        </StackPanel>-->
+
+              
 
         <StackPanel Grid.Row="1"
                     Grid.Column="1"
@@ -54,7 +152,12 @@
                        Margin="0,0,0,10"/>
 
             <Grid>
-                <TextBlock Text="{x:Bind ViewModelData.LastTempStr, Mode=OneWay}"
+                <TextBlock Text="{x:Bind ViewModelData.LastTemperature.ToString(), Mode=OneWay}"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"/>
+
+                <TextBlock Text="°C"
+                           Margin="0,30,0,0"
                            HorizontalAlignment="Center"
                            VerticalAlignment="Center"/>
 
@@ -62,7 +165,7 @@
                               Maximum="{x:Bind ViewModelData.MaxTemp}"
                               Minimum="{x:Bind ViewModelData.MinTemp}" 
                               IsIndeterminate="False" 
-                              Value="{x:Bind ViewModelData.LastTemp, Mode=OneWay}"/>
+                              Value="{x:Bind ViewModelData.LastTemperature, Mode=OneWay}"/>
             </Grid>
         </StackPanel>
 
@@ -77,9 +180,15 @@
                        Margin="0,0,0,4"/>
 
             <Grid>
-                <TextBlock Text="{x:Bind ViewModelData.LastPressureStr, Mode=OneWay}"
+                <TextBlock Text="{x:Bind ViewModelData.LastPressure, Mode=OneWay}"
                        HorizontalAlignment="Center"
                        VerticalAlignment="Center"/>
+
+                <TextBlock Text="hPa"
+                           Margin="0,30,0,0"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"/>
+                
                 <ProgressRing Width="280" Height="280" 
                                   Maximum="{x:Bind ViewModelData.MaxPressure}"
                                   Minimum="{x:Bind ViewModelData.MiniPressure}" 
@@ -88,7 +197,7 @@
             </Grid>
         </StackPanel>
 
-        
+
 
         <Border Grid.Column="1" Grid.ColumnSpan="2"
                 Grid.Row="2"
@@ -102,6 +211,11 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
 
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
                 <TextBlock Text="Temperature (°C)"
                            VerticalAlignment="Center"
                            HorizontalAlignment="Center" 
@@ -112,25 +226,19 @@
                     </TextBlock.RenderTransform>
                 </TextBlock>
 
-                <StackPanel Grid.Column="1"
-                            VerticalAlignment="Center"
-                            HorizontalAlignment="Stretch">
+                <lvc:CartesianChart Grid.Column="1" 
+                                    TooltipPosition="Top"
+                                    Series="{x:Bind ViewModelData.SeriesTemperature}"
+                                    ZoomMode="X"/>
 
-                    <lvc:CartesianChart TooltipPosition="Top"
-                                        Series="{x:Bind ViewModelData.SeriesTemperature}"
-                                        ZoomMode="X"
-                                        MinHeight="350"/>
-
-                    <TextBlock Text="Sample Number"
-                               Style="{StaticResource NavigationViewItemHeaderTextStyle}"
-                               HorizontalAlignment="Center"
-                               Margin="4"/>
-                </StackPanel>
+                <TextBlock Grid.Row="1"
+                           Grid.Column="1" 
+                           Text="Sample Number"
+                           Style="{StaticResource NavigationViewItemHeaderTextStyle}"
+                           HorizontalAlignment="Center"
+                           Margin="4"/>
             </Grid>
         </Border>
-
-
-
 
 
         <Border Grid.Column="1" Grid.ColumnSpan="2"
@@ -145,9 +253,14 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
 
-                <TextBlock Text="Pressure (psi)"
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <TextBlock Text="Pressure (hPa)"
                            VerticalAlignment="Center"
-                           HorizontalAlignment="Center"
+                           HorizontalAlignment="Center" 
                            RenderTransformOrigin="0.5,0.5"
                            Style="{StaticResource NavigationViewItemHeaderTextStyle}">
                     <TextBlock.RenderTransform>
@@ -155,28 +268,20 @@
                     </TextBlock.RenderTransform>
                 </TextBlock>
 
-                <StackPanel Grid.Column="1"
-                            VerticalAlignment="Center"
-                            HorizontalAlignment="Stretch">
+                <lvc:CartesianChart Grid.Column="1" 
+                                    TooltipPosition="Top"
+                                    Series="{x:Bind ViewModelData.SeriesPressure}"
+                                    ZoomMode="X"/>
 
-                    <lvc:CartesianChart TooltipPosition="Top"
-                                        Series="{x:Bind ViewModelData.SeriesPressure}"
-                                        ZoomMode="X"
-                                        MinHeight="350"/>
-
-                    <TextBlock Text="Sample Number"
-                               Style="{StaticResource NavigationViewItemHeaderTextStyle}"
-                               HorizontalAlignment="Center"
-                               Margin="4"/>
-
-                </StackPanel>
+                <TextBlock Grid.Row="1"
+                           Grid.Column="1" 
+                           Text="Sample Number"
+                           Style="{StaticResource NavigationViewItemHeaderTextStyle}"
+                           HorizontalAlignment="Center"
+                           Margin="4"/>
             </Grid>
         </Border>
 
 
-
-
-
-   
     </Grid>
 </Page>

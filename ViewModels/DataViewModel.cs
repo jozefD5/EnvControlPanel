@@ -2,75 +2,84 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.IO.Ports;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using System.Xml.Linq;
 using ABI.Windows.UI;
 using EnvControlPanel.Models;
+using EnvControlPanel.Views;
 using LiveChartsCore;
 using LiveChartsCore.Defaults;
 using LiveChartsCore.Kernel;
 using LiveChartsCore.SkiaSharpView;
 using LiveChartsCore.SkiaSharpView.Painting;
 using LiveChartsCore.SkiaSharpView.WinUI;
+using Microsoft.UI.Dispatching;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Media;
 using SkiaSharp;
 using Windows.Foundation.Collections;
+using Windows.UI.Core;
 
 namespace EnvControlPanel.ViewModels
 {
     public class DataViewModel : BindableBase
     {
+        private readonly DispatcherQueue _dispatcherQueue = DispatcherQueue.GetForCurrentThread();
 
         private ObservableCollection<double> temperatureData;
         private ObservableCollection<double> pressureData;
-
-
         private double lastTemperature;
-        private string lastTemperatureStr;
-
         private double lastPressure;
-        private string lastPressureStr;
 
         public double MaxTemp { get; set; }
         public double MinTemp { get; set; }
 
         public double MaxPressure { get; set; }
         public double MiniPressure { get; set; }
-        
+
+        private int  collectionSizeLimit;
+        private bool deviceStatus;
+        private bool temoperatureMonitoring;
+        private bool pressureMonitoring;
 
 
-        public ICommand AddTempCommand { get; set; }
+        public ICommand SetDeviceStateCommand { get; set; }
+        public ICommand ReadDeviceStatusCommand { get; set; }
+        public ICommand ReportModeNormalCommand { get; set; }
+        public ICommand ReportModeSlowCommand { get; set; }
+        public ICommand ReportModeFastCommand { get; set; }
 
         public ObservableCollection<ISeries> SeriesTemperature { get; set; }
         public ObservableCollection<ISeries> SeriesPressure { get; set; }
 
 
-
-
-
-
+          
         public DataViewModel()
         {
-            //Settings
+            //Initial settings
             MaxTemp = 140;
             MinTemp = -50;
+            MaxPressure = 1200;
+            MiniPressure = 0;
+            collectionSizeLimit = 50;
+            deviceStatus = false;
 
-            MaxPressure = 120;
-            MiniPressure = -20;
+            //Add event handler for incomming new data
+            EnvDevice.dataFlow.NewEnvData += NewDataProcess;
 
             //Setup
             temperatureData = new ObservableCollection<double> {0.0};
             lastTemperature = temperatureData.LastOrDefault();
-            lastTemperatureStr = lastTemperature.ToString() + " °C";
 
             pressureData = new ObservableCollection<double> {0.0};
             lastPressure = pressureData.LastOrDefault();
-            lastPressureStr = lastPressure.ToString() + " psi";
 
 
-
+            //Setup temperature and presure graphs
             SeriesTemperature = new ObservableCollection<ISeries>
             {
                 new LineSeries<double>
@@ -84,7 +93,6 @@ namespace EnvControlPanel.ViewModels
                     TooltipLabelFormatter = (charPoin) => $"{charPoin.Context.Series.Name}: {charPoin.PrimaryValue}"
                 }
             };
-
             SeriesPressure = new ObservableCollection<ISeries>
             {
                 new LineSeries<double>
@@ -99,17 +107,18 @@ namespace EnvControlPanel.ViewModels
                 }
             };
 
-            AddTempCommand = new RelayCommand(AddTemp);
+
+            //Add commands for UI components
+            SetDeviceStateCommand = new RelayCommand(SetDeviceState);
+            ReadDeviceStatusCommand = new RelayCommand(ReadDeviceStatus);
+            ReportModeNormalCommand = new RelayCommand(SetReportModeToNormal);
+            ReportModeSlowCommand = new RelayCommand(SetReportModeToSlow);
+            ReportModeFastCommand = new RelayCommand(SetReportModeToFast);
         }
 
 
-    
 
-
-
-
-
-        //Temperature 
+        //Collection containing record of received temperature data
         public ObservableCollection<double> TemperatureData
         {
             get => temperatureData;
@@ -120,7 +129,8 @@ namespace EnvControlPanel.ViewModels
             }
         }
 
-        public double LastTemp
+        //Last/newest temperature value in collection
+        public double LastTemperature
         {
             get => lastTemperature;
 
@@ -130,18 +140,9 @@ namespace EnvControlPanel.ViewModels
             }
         }
 
-        public string LastTempStr
-        {
-            get => lastTemperatureStr;
-
-            set
-            {
-                SetProperty(ref lastTemperatureStr, value);
-            }
-        }
 
 
-        //Pressure
+        //Collection containing record of received pressure data
         public ObservableCollection<double> PressureData
         {
             get => pressureData;
@@ -152,6 +153,7 @@ namespace EnvControlPanel.ViewModels
             }
         }
 
+        //Last/newest pressure value in collection
         public double LastPressure
         {
             get => lastPressure;
@@ -162,43 +164,205 @@ namespace EnvControlPanel.ViewModels
             }
         }
 
-        public string LastPressureStr
+
+
+
+        //Keep collection size withinthe limit by removing  required ammount of elements
+        private void LimitCollectionSize(ObservableCollection<double> collection)
         {
-            get => lastPressureStr;
+            if(collection.Count() >= collectionSizeLimit)
+            {
+                for(int i=0; i< (collectionSizeLimit/2); i++)
+                {
+                    collection.RemoveAt(i);
+                }
+            }
+        }
+
+
+        //Update UI graph components
+        private void UpdateGraph()
+        {
+            LastTemperature = temperatureData.LastOrDefault();
+            LastPressure = pressureData.LastOrDefault();
+
+            LimitCollectionSize(TemperatureData);
+            LimitCollectionSize(PressureData);
+        }
+
+
+        public void AddTemp()
+        {
+            Random tempVal = new();
+
+            double temp1 = tempVal.Next(-10, 120);
+            double temp2 = tempVal.Next(-5, 120);
+
+            TemperatureData.Add(temp1);
+            PressureData.Add(temp2);
+
+            LastTemperature = temperatureData.LastOrDefault();
+            LastPressure = pressureData.LastOrDefault();
+
+            LimitCollectionSize(TemperatureData);
+            LimitCollectionSize(PressureData);
+        }
+
+
+
+        //Device monitoring status, activates/deactivate monitoring
+        public bool DeviceStatus
+        {
+            get => deviceStatus;
 
             set
             {
-                SetProperty(ref lastPressureStr, value);
+                SetProperty(ref deviceStatus, value);
+                SetDeviceState();
+            }
+        }
+
+        //Activate/deactivate temperature monitoring 
+        public bool TemoperatureMonitoring
+        {
+            get => temoperatureMonitoring;
+
+            set
+            {
+                SetProperty(ref temoperatureMonitoring, value);
+                SetTemperatureMonitoring();
+            }
+        }
+
+        //Activate/deactivate pressure monitoring 
+        public bool PressureMonitoring
+        {
+            get => pressureMonitoring;
+
+            set
+            {
+                SetProperty(ref pressureMonitoring, value);
+                SetPressureMonitoring();
             }
         }
 
 
 
 
-        private void UpdateReadings()
-        {
-            LastTemp = temperatureData.LastOrDefault();
-            LastTempStr = lastTemperature.ToString() + " °C";
 
-            LastPressure = pressureData.LastOrDefault();
-            LastPressureStr = lastPressure.ToString() + " psi";
+        private void ReadDeviceStatus()
+        {
+            EnvDevice.Device.SerialWrite(SerialCommands.env_sc_rstatus);
         }
 
-     
-
-        public void AddTemp()
+        private void SetDeviceState()
         {
+            if (deviceStatus)
+            {
+                EnvDevice.Device.SerialWrite(SerialCommands.env_sc_activate);
+            }
+            else
+            {
+                EnvDevice.Device.SerialWrite(SerialCommands.env_sc_deactivate);
+            }
+        }
 
-            Random tempVal = new();
+        private void SetTemperatureMonitoring()
+        {
+            if (temoperatureMonitoring)
+            {
+                EnvDevice.Device.SerialWrite(SerialCommands.env_sc_temp_activate);
+            }
+            else
+            {
+                EnvDevice.Device.SerialWrite(SerialCommands.env_sc_temp_deactivate);
+            }
+        }
 
-            double temp1 = tempVal.Next(-10, 120);
-            double temp2 = tempVal.Next(-5, 120);
+        private void SetPressureMonitoring()
+        {
+            if (pressureMonitoring)
+            {
+                EnvDevice.Device.SerialWrite(SerialCommands.env_sc_pres_activate);
+            }
+            else
+            {
+                EnvDevice.Device.SerialWrite(SerialCommands.env_sc_pres_deactivate);
+            }
+        }
+
+        private void SetReportModeToNormal()
+        {
+            EnvDevice.Device.SerialWrite(SerialCommands.env_sc_rim_normal);
+        }
+
+        private void SetReportModeToSlow()
+        {
+            EnvDevice.Device.SerialWrite(SerialCommands.env_sc_rim_slow);
+        }
+
+        private void SetReportModeToFast()
+        {
+            EnvDevice.Device.SerialWrite(SerialCommands.env_sc_rim_fast);
+        }
 
 
-            TemperatureData.Add(temp1);
-            PressureData.Add(temp2);
 
-            UpdateReadings();
+
+        //Process new UART data on rx event
+        private void NewDataProcess(object sender, NewEnvDataEventArgs eventArgs)
+        {
+            string str = eventArgs.SerialDataStr;
+
+            switch (str)
+            {
+                case string a when str.Contains(SerialCommands.env_sc_status):
+                    Debug.WriteLine($"Data: {a}");
+                    break;
+
+                case string a when str.Contains(SerialCommands.env_sc_temp_data):
+                    SeperateReadings(SerialCommands.env_sc_temp_data,  a);
+                    break;
+
+                case string a when str.Contains(SerialCommands.env_sc_pres_data):
+                    SeperateReadings(SerialCommands.env_sc_pres_data,  a);
+                    break;
+
+                default:
+                    Debug.WriteLine($"Unsupported Command!: {str}");
+                    break;
+            }
+        }
+
+
+
+        //Seperate temperature or pressure readings and add data to collection and display lates data
+        private void SeperateReadings(string select, string rxData)
+        {
+            string str = new string((from c in rxData
+                                     where char.IsDigit(c) || c == '.'
+                                     select c).ToArray());
+
+            double val = double.Parse(str, System.Globalization.CultureInfo.InvariantCulture);
+
+
+            //update UI components
+            Task.Run(() =>
+            {
+                _ = _dispatcherQueue.TryEnqueue(() =>
+                {
+                    if (select == SerialCommands.env_sc_temp_data)
+                    {
+                        TemperatureData.Add(val);
+                        UpdateGraph();
+                    }
+                    else if (select == SerialCommands.env_sc_pres_data)
+                    {
+                        PressureData.Add(val);
+                        UpdateGraph();
+                    }
+                });
+            });
         }
 
 

@@ -55,10 +55,6 @@ namespace EnvControlPanel
                     ContentFrame.Navigate(typeof(Views.DataDisplayView));
                     break;
 
-                case "SettingsViewNv":
-                    ContentFrame.Navigate(typeof(Views.SettingsView));
-                    break;
-
                 default:
                     break;
             }

@@ -34,7 +34,7 @@ namespace EnvControlPanel
         /// </summary>
    
 
-        public static MainViewModel ViewModelMain { get; } = new MainViewModel();
+        public static HomeViewModel ViewModelHome { get; } = new HomeViewModel();
         public static DataViewModel ViewModelData { get; } = new DataViewModel();
 
 

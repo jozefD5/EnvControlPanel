@@ -7,6 +7,8 @@ using EnvControlPanel.Enums;
 using EnvControlPanel.ViewModels;
 using System.IO.Ports;
 using System.Diagnostics;
+using EnvControlPanel.Models;
+using System.Text.RegularExpressions;
 
 namespace EnvControlPanel.Models
 {
@@ -21,17 +23,19 @@ namespace EnvControlPanel.Models
 
         public SerialComDevice(string name)
         {
-            ConnectStatus = ComStatus.disconnect;
-
             serialPort = new SerialPort
             {
                 PortName = name
             };
 
+            ConnectStatus = ComStatus.disconnect;
             SetSerialConf();
         }
 
-
+        public SerialPort Port
+        {
+            get { return serialPort; }
+        }
 
         public string PortName
         {
@@ -80,14 +84,13 @@ namespace EnvControlPanel.Models
 
 
 
-        public void SerialWriteLine(string str)
+        public void SerialWrite(string str)
         {
-            serialPort.WriteLine(str);
+            if (IsOpen)
+            {
+                serialPort.Write(str);
+            }
         }
-
-
-
-
 
         public void Close()
         {
@@ -98,23 +101,26 @@ namespace EnvControlPanel.Models
             CheckConnect();
         }
 
-        public void Open()
+
+        //Open serial port and add data received handler
+        public bool Open()
         {
             try
             {
                 if (!IsOpen)
                 {
                     serialPort.Open();
-
-                    serialPort.DataReceived += new SerialDataReceivedEventHandler(DataReceivedHandler);
                 }
-                CheckConnect();
 
+                CheckConnect();
+                return true;
             }
             catch(System.IO.FileNotFoundException ex)
             {
                 Debug.WriteLine("Exception: " + ex.ToString());
                 ConnectStatus = ComStatus.error;
+
+                return false;
             }
         }
 
@@ -142,17 +148,6 @@ namespace EnvControlPanel.Models
             StopBit = StopBits.One;
         }
 
-
-        private void DataReceivedHandler(object sender, SerialDataReceivedEventArgs e)
-        {
-            SerialPort sp = (SerialPort)sender;
-
-            string dataStream = sp.ReadLine();
-            int dataCount = dataStream.Length;
-
-            Debug.WriteLine($"sl:   {dataStream}");
-        }
-
-
+     
     }
 }
