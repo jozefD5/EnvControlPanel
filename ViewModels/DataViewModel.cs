@@ -359,7 +359,6 @@ namespace EnvControlPanel.ViewModels
                     else if (select == SerialCommands.env_sc_pres_data)
                     {
                         PressureData.Add(val);
-                        Debug.WriteLine($"P: {val}");
                         UpdateGraph();
                     }
                 });
